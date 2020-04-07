@@ -1,0 +1,39 @@
+.card {
+  background-color: dodgerblue;
+  color: white;
+  padding: 1rem;
+  word-wrap: break-word;
+
+  // height: 8rem;
+  // display: flex;
+  // justify-content: space-between;
+}
+.card span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  img {
+    height: 100%;
+    max-height: 50px;
+    max-width: 50px;
+  }
+}
+
+.cards {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
