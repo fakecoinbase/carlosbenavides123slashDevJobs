@@ -13,6 +13,8 @@ for item in _reduce:
         print(item["jobs"])
     else:
         print("no")
+
+
 # soup = BeautifulSoup(page.content, 'html.parser')
 # result = soup.findAll(
 # results_title = soup.find_all("div")[0].prettify()
