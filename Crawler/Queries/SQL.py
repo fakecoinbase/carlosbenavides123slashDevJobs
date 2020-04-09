@@ -31,16 +31,18 @@ class Query(object):
                                             Remembered_Jobs \
                                             (JobID, \
                                             Company_UUID, \
-                                            isActive) VALUES (%s, %s, %s)"
+                                            ProvidedID, \
+                                            isActive) VALUES (%s, %s, %s, %s)"
         self.cursor.execute(SQL_INSERT_INTO_REMEMBERED_JOB, values)
 
-    def deactivate_job(self, job_id, company_uuid):
+    def deactivate_job(self, job_id, company_uuid, provided_id):
         SQL_SOFT_DELETE_JOB = "UPDATE %s \
                                 SET Active=%s \
                                 WHERE JobID=%s, \
-                                Company_UUID=%s"
-        job_table_data = ("Jobs", 0, job_id, company_uuid)
-        self.cursor.execute(SQL_SOFT_DELETE_JOB, table1_data)
+                                Company_UUID=%s \
+                                ProvidedID=%s"
+        job_table_data = ("Jobs", 0, job_id, company_uuid, provided_id)
+        self.cursor.execute(SQL_SOFT_DELETE_JOB, job_table_data)
         rememb_table_data = ("Remembered Jobs", 0, job_id, company_uuid)
-        self.cursor.execute(SQL_SOFT_DELETE_JOB, rememb_table_data)
+        self.cursor.execute(SQL_SOFT_DELETE_JOB, rememb_table_data, provided_id)
 
