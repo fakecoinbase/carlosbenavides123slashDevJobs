@@ -5,7 +5,7 @@ import json
 from datetime import date
 
 WANTED = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
-def Honey(UUID, Name, Website, query, utils):
+def Honey(UUID, Name, Website, query, utils, kafka):
     page = requests.get(Website)
     json_page = page.json()
     _reduce = json_page["departments"]
@@ -46,6 +46,8 @@ def Honey(UUID, Name, Website, query, utils):
 
                     query.insert_new_job( (job_id, UUID, Joblink, Website, provided_id) + experience_level)
                     query.insert_new_remembered_job((job_id, UUID, provided_id, 1) )
+                    data = {"data": "lol"}
+                    kafka.send_json_message("foo", data)
                 else:
                     del check_job_list[job_id]
     # delete the stragglers in here
