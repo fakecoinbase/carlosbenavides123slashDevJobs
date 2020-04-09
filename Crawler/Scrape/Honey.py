@@ -4,7 +4,7 @@ import re
 import json
 from datetime import date
 
-def Honey(UUID, Name, Website, cursor):
+def Honey(UUID, Name, Website, query, utils):
     page = requests.get(Website)
     json_page = page.json()
     _reduce = json_page["departments"]
@@ -13,13 +13,17 @@ def Honey(UUID, Name, Website, cursor):
     Manager = set(["manager"])
     Senior = set(["principle", "senior"])
     Mid = set(["mid"])
-    Entry = set(["entry", "junior", "new", "grad"])
+    Entry = set(["entry", "junior", "new", "grad", "associate"])
     Intern = set(["internship", "intern"])
     wanted = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
+
+    active_jobs = query.get_active_remembered_jobs(UUID)
+    check_job_list = utils.convert_active_jobs_to_dict(active_jobs)
 
     for item in _reduce:
         if item["name"] in wanted:
             for job in item["jobs"]:
+                print(job)
                 reduce_date = [ int(x) for x in job["updated_at"].split("T")[0].split("-") ]
                 company_listing_date = date(*reduce_date)
                 today = date.today()
@@ -29,11 +33,16 @@ def Honey(UUID, Name, Website, cursor):
                     break
                 location = job["location"]["name"].replace(" ", "%")
                 title = job["title"].replace(" ","%")
-                JobID = UUID + "_%_" + title + "_%_" + location
-                print(JobID)
-                SQL_CHECK_REMEMBERED = "SELECT isActive FROM Remembered_Jobs WHERE JobID=%s AND Company_UUID=%s"
-                cursor.execute(SQL_CHECK_REMEMBERED, (JobID, UUID))
-                isActive = cursor.fetchall()
+
+                job_id = UUID + "_%_" + title + "_%_" + location
+
+                # test deactivating a row
+                # first get all relational jobs where isActive == 1
+                # then make a list [0] * length of 
+
+                isActive = query.check_active_job(job_id, UUID)
+
+                print(isActive)
                 if len(isActive) == 0:
                     # send to Jobs Table
 
@@ -62,17 +71,16 @@ def Honey(UUID, Name, Website, cursor):
                         if not bool(title_key_word.intersection(set(["new", "grad", "Junior", "Entry"]))):
                             intersect_mid = set(["1"])
                         intersect_entry = set(["1"])
-
+                    provided_id = job["id"]
                     is_manager = int(bool(intersect_manager))
                     is_senior = int(bool(intersect_senior))
                     is_mid = int(bool(intersect_mid))
                     is_entry = int(bool(intersect_entry))
                     is_intern = int(bool(intersect_intern))
-
+                    active = 1
+                    
                     Joblink = job["absolute_url"]
-                    SQL = "INSERT INTO Jobs (JobID, Company_UUID, Joblink, DefaultLink, Internship, Entry, Mid, Senior, Manager) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                    print(SQL)
-                    print((JobID, UUID, Joblink, Website, is_intern, is_entry, is_mid, is_senior, is_manager))
-                    cursor.execute(SQL, (JobID, UUID, Joblink, Website, is_intern, is_entry, is_mid, is_senior, is_manager))
+                    query.insert_new_job( (job_id, UUID, Joblink, Website, provided_id, is_intern, is_entry, is_mid, is_senior, is_manager, active) )
+                    query.insert_new_remembered_job((job_id, UUID, 1))
                 else:
                     break
