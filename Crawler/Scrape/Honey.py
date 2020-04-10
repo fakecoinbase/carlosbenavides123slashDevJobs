@@ -4,6 +4,8 @@ import re
 import json
 from datetime import date
 
+import protos.job_pb2
+
 WANTED = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
 def Honey(UUID, Name, Website, query, utils, kafka):
     page = requests.get(Website)
@@ -46,8 +48,21 @@ def Honey(UUID, Name, Website, query, utils, kafka):
 
                     query.insert_new_job( (job_id, UUID, Joblink, Website, provided_id) + experience_level)
                     query.insert_new_remembered_job((job_id, UUID, provided_id, 1) )
-                    data = {"data": "lol"}
-                    kafka.send_json_message("foo", data)
+
+                    # create proto
+                    job = protos.job_pb2.Job()
+                    job.JobID = job_id
+                    job.Company_UUID = UUID
+                    job.JobLink = Joblink
+                    job.DefaultLink = Website
+                    job.ProvidedID = str(provided_id)
+                    job.Internship = experience_level[0]
+                    job.Entry = experience_level[1]
+                    job.Mid = experience_level[2]
+                    job.Senior = experience_level[3]
+                    job.Manager = experience_level[4]
+                    job.Active = experience_level[5]
+                    kafka.send_protobuf_message("foo", job)
                 else:
                     del check_job_list[job_id]
     # delete the stragglers in here

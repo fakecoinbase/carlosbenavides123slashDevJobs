@@ -41,7 +41,7 @@ def main():
         query = Query(cursor)
         utils = Utils()
         kafka = KafkaMsg()
-        kafka.setup_json_producer()
+        kafka.setup_protobuf_producer()
 
         companies = query.get_all_companies()
 
