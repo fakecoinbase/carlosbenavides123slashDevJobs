@@ -8,10 +8,12 @@ message Job {
     string JobLink = 3;
     string DefaultLink = 4;
     string ProvidedID = 5;
-    bool Internship = 6;
-    bool Entry = 7;
-    bool Mid = 8;
-    bool Senior = 9;
-    bool Manager = 10;
-    bool Active = 11;
+    string CompanyName = 6;
+    bool Internship = 7;
+    bool Entry = 8;
+    bool Mid = 9;
+    bool Senior = 10;
+    bool Manager = 11;
+    bool Active = 12;
+    int64 JobPosted = 13;
 }

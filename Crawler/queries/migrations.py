@@ -15,7 +15,8 @@ def run_migrations(cursor):
                     ( JobID VARCHAR(255) NOT NULL, \
                     Company_UUID VARCHAR(255) NOT NULL, \
                     Joblink VARCHAR(255), DefaultLink VARCHAR(255), \
-                    ProvidedID VARCHAR(255), Internship TINYINT(1), \
+                    ProvidedID VARCHAR(255), CompanyName VARCHAR(255), \
+                    Internship TINYINT(1), \
                     Entry TINYINT(1), Mid TINYINT(1), Senior TINYINT(1), \
                     Manager TINYINT(1), Active TINYINT(1), PRIMARY KEY(JobID), \
                     FOREIGN KEY(Company_UUID) REFERENCES Companies(UUID) )")

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 from datetime import date
-
+import time
 from protos.create_job import create_job
 
 WANTED = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
@@ -40,12 +40,13 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                     provided_id = str(job["id"])
                     Joblink = job["absolute_url"]
 
-                    data = (job_id, UUID, Joblink, Website, provided_id) + experience_level
+                    data = (job_id, UUID, Joblink, Website, provided_id, Name) + experience_level
 
                     query.insert_new_job( data )
                     query.insert_new_remembered_job( (data[0], data[1], data[4], data[-1]) )
-
-                    job = create_job(data)
+                    
+                    temp_time_arr = [int(time.mktime(company_listing_date.timetuple()))]
+                    job = create_job(tuple(list(data) + temp_time_arr ))
                     kafka.send_protobuf_message("new_job", job)
                 else:
                     del check_job_list[job_id]

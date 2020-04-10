@@ -20,9 +20,9 @@ class Query(object):
     def insert_new_job(self, values):
         SQL_INSERT_INTO_JOBS = "INSERT INTO Jobs \
                                 (JobID, Company_UUID, Joblink, \
-                                DefaultLink, ProvidedID, Internship, Entry, \
+                                DefaultLink, ProvidedID, CompanyName, Internship, Entry, \
                                 Mid, Senior, Manager, Active) \
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         # print(SQL_INSERT_INTO_JOBS)
         self.cursor.execute(SQL_INSERT_INTO_JOBS, values)
 
