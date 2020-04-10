@@ -4,7 +4,7 @@ import re
 import json
 from datetime import date
 
-import protos.job_pb2
+from protos.create_job import create_job
 
 WANTED = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
 def Honey(UUID, Name, Website, query, utils, kafka):
@@ -22,7 +22,6 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                 company_listing_date = date(*reduce_date)
                 today = date.today()
                 delta = (today - company_listing_date).days
-                # print(job["title"])
                 if delta > 30:
                     print("forget about it")
                     break
@@ -30,12 +29,7 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                 title = job["title"].replace(" ","%")
                 job_id = UUID + "_%_" + title + "_%_" + location
 
-                # test deactivating a row
-                # first get all relational jobs where isActive == 1
-                # then make a list [0] * length of 
-
                 isActive = query.check_active_job(job_id, UUID)
-                # print(isActive)
                 if len(isActive) == 0:
                     # send to Jobs Table
 
@@ -43,26 +37,16 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                     job_title = set(job["title"].lower().split(" "))
                     experience_level = utils.determine_experience_level(job_title)
                     
-                    provided_id = job["id"]
+                    provided_id = str(job["id"])
                     Joblink = job["absolute_url"]
 
-                    query.insert_new_job( (job_id, UUID, Joblink, Website, provided_id) + experience_level)
-                    query.insert_new_remembered_job((job_id, UUID, provided_id, 1) )
+                    data = (job_id, UUID, Joblink, Website, provided_id) + experience_level
 
-                    # create proto
-                    job = protos.job_pb2.Job()
-                    job.JobID = job_id
-                    job.Company_UUID = UUID
-                    job.JobLink = Joblink
-                    job.DefaultLink = Website
-                    job.ProvidedID = str(provided_id)
-                    job.Internship = experience_level[0]
-                    job.Entry = experience_level[1]
-                    job.Mid = experience_level[2]
-                    job.Senior = experience_level[3]
-                    job.Manager = experience_level[4]
-                    job.Active = experience_level[5]
-                    kafka.send_protobuf_message("foo", job)
+                    query.insert_new_job( data )
+                    query.insert_new_remembered_job( (data[0], data[1], data[4], data[-1]) )
+
+                    job = create_job(data)
+                    kafka.send_protobuf_message("new_job", job)
                 else:
                     del check_job_list[job_id]
     # delete the stragglers in here

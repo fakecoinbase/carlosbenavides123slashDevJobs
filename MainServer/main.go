@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	c.SubscribeTopics([]string{"foo"}, nil)
+	c.SubscribeTopics([]string{"new_job", "del_job"}, nil)
 
 	for {
 		msg, err := c.ReadMessage(-1)
@@ -32,7 +32,7 @@ func main() {
 			topic, _ := s[0], s[1]
 
 			switch topic {
-			case "foo":
+			case "new_job":
 				fmt.Println("lmao")
 			default:
 				break
