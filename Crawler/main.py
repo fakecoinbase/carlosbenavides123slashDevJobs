@@ -15,7 +15,7 @@ from kafka_utils.setup_kafka import KafkaMsg
 from Scrape.Honey import Honey
 
 def addHoney(cursor):
-    UUID = str(uuid.uuid4())
+    UUID = "50b3dae9-0bec-456f-af6d-61a8fabe0935"
     Name = "Honey"
     Website = "https://api.greenhouse.io/v1/boards/honey/departments"
     SQL = "INSERT INTO Companies (UUID, Name, Website) VALUES (%s, %s, %s)"

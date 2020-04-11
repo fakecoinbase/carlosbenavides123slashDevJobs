@@ -3,10 +3,9 @@ import "./Card.scss";
 import Button from "../Button/Button"
 import moment from 'moment'
 
-function Card({uuid, company_name, job_link, job_posted, job_found}) {
+function Card({job_uuid, job_title, job_link, job_posted, job_found, company_name, cloudinary, level}) {
 
-  var res = uuid.split("_%_")
-  var job_title = res[1].replace(/%/g, ' ')
+  var res = job_uuid.split("_%_")
   var location = res[2].replace(/%/g, ' ')
 
   function handleJobClick(e) {
@@ -17,7 +16,7 @@ function Card({uuid, company_name, job_link, job_posted, job_found}) {
         <span>
           <img
             src={
-              "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png"
+              cloudinary
             }
             className="icon"
             alt="company"
