@@ -1,81 +1,46 @@
-import React, { Component } from "react";
+import React from "react";
 import "./Card.scss";
+import Button from "../Button/Button"
+import moment from 'moment'
 
-function Card() {
+function Card({uuid, company_name, job_link, job_posted, job_found}) {
+
+  var res = uuid.split("_%_")
+  var job_title = res[1].replace(/%/g, ' ')
+  var location = res[2].replace(/%/g, ' ')
+
+  function handleJobClick(e) {
+    window.open(job_link, '_blank')
+  }
   return (
-    <div class="cards">
-      <div class="card">
+      <div className="card">
         <span>
           <img
             src={
               "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png"
             }
             className="icon"
+            alt="company"
           />
-          Los Angeles, CA
+          {location}
         </span>
         <br />
-        Honey
-        <br />
-        Software Engineer
-        <br />
-        <button>Apply</button>
-      </div>
+        <div className="info">
+          {company_name}
+          <br></br>
+          {job_title}
+        </div>
+ 
+        <span className="apply_info">
+        {job_posted && <>Posted on: {moment.unix(job_posted).format("MM/DD/YYYY")}</>
+        }
+        {!job_posted && <span>Job Found on: {moment.unix(job_found)}</span>}
+        <Button btype="joblink" text={"Apply"} onClick={handleJobClick}/>
 
-      <div class="card">
-        <span>
-          <img
-            src={
-              "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png"
-            }
-            className="icon"
-          />
-          Los Angeles, CA
         </span>
-        <br />
-        Honey
-        <br />
-        Software Engineer
-        <br />
-        <button>Apply</button>
-      </div>
 
-      <div class="card">
-        <span>
-          <img
-            src={
-              "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png"
-            }
-            className="icon"
-          />
-          Los Angeles, CA
-        </span>
-        <br />
-        Honey
-        <br />
-        Software Engineer
-        <br />
-        <button>Apply</button>
-      </div>
 
-      <div class="card">
-        <span>
-          <img
-            src={
-              "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png"
-            }
-            className="icon"
-          />
-          Los Angeles, CA
-        </span>
-        <br />
-        Honey
-        <br />
-        Software Engineer
-        <br />
-        <button>Link to Apply</button>
       </div>
-    </div>
   );
 }
 

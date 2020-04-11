@@ -17,23 +17,25 @@ class Query(object):
         self.cursor.execute(SQL_CHECK_REMEMBERED, (job_id, company_uuid))
         return self.cursor.fetchall()
 
-    def insert_new_job(self, values):
+    def insert_new_job(self, job):
         SQL_INSERT_INTO_JOBS = "INSERT INTO Jobs \
                                 (JobID, Company_UUID, Joblink, \
                                 DefaultLink, ProvidedID, CompanyName, Internship, Entry, \
                                 Mid, Senior, Manager, Active) \
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        # print(SQL_INSERT_INTO_JOBS)
-        self.cursor.execute(SQL_INSERT_INTO_JOBS, values)
+        self.cursor.execute(SQL_INSERT_INTO_JOBS, (job.JobID, job.Company_UUID, job.JobLink,
+                            job.DefaultLink, job.ProvidedID, job.CompanyName, job.Internship,
+                            job.Entry, job.Mid, job.Senior, job.Manager, job.Active))
 
-    def insert_new_remembered_job(self, values):
+    def insert_new_remembered_job(self, job):
         SQL_INSERT_INTO_REMEMBERED_JOB = "INSERT INTO \
                                             Remembered_Jobs \
                                             (JobID, \
                                             Company_UUID, \
                                             ProvidedID, \
                                             isActive) VALUES (%s, %s, %s, %s)"
-        self.cursor.execute(SQL_INSERT_INTO_REMEMBERED_JOB, values)
+        self.cursor.execute(SQL_INSERT_INTO_REMEMBERED_JOB, (job.JobID, 
+                            job.Company_UUID, job.ProvidedID, job.Active))
 
     def deactivate_job(self, job_id, company_uuid, provided_id):
         SQL_SOFT_DELETE_JOB = "UPDATE %s \

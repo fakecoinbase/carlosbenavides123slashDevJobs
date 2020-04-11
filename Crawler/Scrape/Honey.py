@@ -14,6 +14,7 @@ def Honey(UUID, Name, Website, query, utils, kafka):
 
     active_jobs = query.get_active_remembered_jobs(UUID)
     check_job_list = utils.convert_active_jobs_to_dict(active_jobs)
+
     # print(json_page)
     for item in _reduce:
         if item["name"] in WANTED:
@@ -22,31 +23,30 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                 company_listing_date = date(*reduce_date)
                 today = date.today()
                 delta = (today - company_listing_date).days
+
                 if delta > 30:
                     print("forget about it")
                     break
+
                 location = job["location"]["name"].replace(" ", "%")
                 title = job["title"].replace(" ","%")
                 job_id = UUID + "_%_" + title + "_%_" + location
-
                 isActive = query.check_active_job(job_id, UUID)
+
                 if len(isActive) == 0:
                     # send to Jobs Table
-
-                    # check the level of the job
                     job_title = set(job["title"].lower().split(" "))
-                    experience_level = utils.determine_experience_level(job_title)
-                    
+                    experience_level = utils.determine_experience_level(job_title)                    
                     provided_id = str(job["id"])
                     Joblink = job["absolute_url"]
+                    time_posted = int(time.mktime(company_listing_date.timetuple()))
+                    active = 1
 
-                    data = (job_id, UUID, Joblink, Website, provided_id, Name) + experience_level
-
-                    query.insert_new_job( data )
-                    query.insert_new_remembered_job( (data[0], data[1], data[4], data[-1]) )
+                    data = [job_id, UUID, Joblink, Website, provided_id, Name] + experience_level + [active, time_posted]
+                    job = create_job(data)
+                    query.insert_new_job( job )
+                    query.insert_new_remembered_job( job )
                     
-                    temp_time_arr = [int(time.mktime(company_listing_date.timetuple()))]
-                    job = create_job(tuple(list(data) + temp_time_arr ))
                     kafka.send_protobuf_message("new_job", job)
                 else:
                     del check_job_list[job_id]

@@ -8,7 +8,8 @@ import (
 )
 
 func GetJobs(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// w.Header().Set("Content-Type", "application/json")
 	jobs, apiErr := services.GetJobs()
 	if apiErr != nil {
 		jsonValue, _ := json.Marshal(apiErr)

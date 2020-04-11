@@ -13,7 +13,7 @@ func GetJobs() ([]*Job, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	res, err := db.Query(`SELECT * FROM jobs`)
+	res, err := db.Query(`SELECT * FROM jobs ORDER BY JobPosted DESC`)
 	if err != nil {
 		panic(err.Error())
 	}

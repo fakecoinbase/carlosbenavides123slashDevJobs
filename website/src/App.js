@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import NavBar from "./components/NavBar/Navbar";
+import {useJobs} from "./components/Hooks/useJobs"
 
 export default function App() {
+  const joblist = useJobs();
+
   return (
     <>
-      <NavBar />
+      <NavBar joblist={joblist.jobs} />
     </>
   );
 }

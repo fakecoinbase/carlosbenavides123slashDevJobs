@@ -1,9 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Modal from "react-modal";
+// import Modal from "react-modal";
 import "./Navbar.scss";
 import Home from "../Home/Home";
-function Navbar() {
+function Navbar({joblist}) {
+  console.log(joblist)
   return (
     <>
       <Router>
@@ -35,7 +36,7 @@ function Navbar() {
             <Users />
           </Route>
           <Route path="/">
-            <Home />
+            <Home joblist={joblist} />
           </Route>
         </Switch>
       </Router>

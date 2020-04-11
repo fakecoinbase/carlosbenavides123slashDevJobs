@@ -46,5 +46,5 @@ class Utils:
         is_mid = int(bool(intersect_mid))
         is_entry = int(bool(intersect_entry))
         is_intern = int(bool(intersect_intern))
-        # 1 is job is active
-        return (is_intern, is_entry, is_mid, is_senior, is_manager, 1)
+
+        return [is_intern, is_entry, is_mid, is_senior, is_manager]
