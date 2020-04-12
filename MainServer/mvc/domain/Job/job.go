@@ -11,3 +11,9 @@ type Job struct {
 	Cloudinary  string `json:"cloudinary"`
 	JobLevel    string `json:"level"`
 }
+
+type NewCompany struct {
+	CompanyName    string `json:"company_name"`
+	CompanyWebsite string `json:"company_website"`
+	Cloudinary     string `json:"cloudinary"`
+}

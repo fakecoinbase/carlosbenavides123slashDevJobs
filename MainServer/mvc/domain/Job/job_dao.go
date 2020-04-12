@@ -6,6 +6,7 @@ import (
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/dbconf"
 	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/utils"
+	uuid "github.com/nu7hatch/gouuid"
 )
 
 func GetJobs() ([]*Job, *utils.ApplicationError) {
@@ -55,4 +56,28 @@ func GetJobs() ([]*Job, *utils.ApplicationError) {
 		StatusCode: http.StatusNotFound,
 		Code:       "not found",
 	}
+}
+
+func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	res, dbPrepareErr := db.Prepare(`INSERT INTO companies(company_uuid, name, cloudinary) 
+				VALUES (?, ?, ?)
+				`)
+	uuid, dbPrepareErr := uuid.NewV4()
+	if dbPrepareErr != nil {
+		panic(error(dbPrepareErr))
+	}
+	res.Exec(uuid.String(), newCompany.CompanyName, newCompany.Cloudinary)
+
+	db2 := dbconf.DbConnToScrappy()
+	defer db2.Close()
+	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO Companies(UUID, Name, Website)
+										VALUES(?, ?, ?)`)
+	if dbPrepareErr2 != nil {
+		panic(error(dbPrepareErr2))
+	}
+	res2.Exec(uuid.String(), newCompany.CompanyName, newCompany.CompanyWebsite)
+	return newCompany, nil
 }

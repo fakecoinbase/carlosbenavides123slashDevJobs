@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 // import Modal from "react-modal";
 import "./Navbar.scss";
 import Home from "../Home/Home";
+import JobForm from "../JobForm/JobForm";
+
 function Navbar({joblist}) {
   console.log(joblist)
   return (
@@ -19,7 +21,7 @@ function Navbar({joblist}) {
                 <Link to="/about">About</Link>
               </li>
               <li>
-                <Link to="/users">Users</Link>
+                <Link to="/jobform">Add A Company</Link>
               </li>
             </ul>
           </nav>
@@ -35,6 +37,9 @@ function Navbar({joblist}) {
           <Route path="/users">
             <Users />
           </Route>
+          <Route path="/jobform">
+              <JobForm />
+          </Route>
           <Route path="/">
             <Home joblist={joblist} />
           </Route>
@@ -44,6 +49,9 @@ function Navbar({joblist}) {
   );
 }
 
+// function Test() {
+//   return <h2>YTes</h2>
+// }
 // function Home() {
 //   const customStyles = {
 //     content: {
