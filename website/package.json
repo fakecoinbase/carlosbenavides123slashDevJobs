@@ -9,6 +9,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
+    "firebase": "^7.14.1",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
     "mobx-react-form": "^2.0.8",

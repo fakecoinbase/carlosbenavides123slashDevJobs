@@ -5,8 +5,8 @@ import "./Navbar.scss";
 import Home from "../Home/Home";
 import JobForm from "../JobForm/JobForm";
 
-function Navbar({joblist}) {
-  console.log(joblist)
+function Navbar({joblist, sw}) {
+  console.log(sw)
   return (
     <>
       <Router>
@@ -32,7 +32,7 @@ function Navbar({joblist}) {
                 renders the first one that matches the current URL. */}
         <Switch>
           <Route path="/about">
-            <About />
+            <About sw={sw}/>
           </Route>
           <Route path="/users">
             <Users />
@@ -105,8 +105,20 @@ function Navbar({joblist}) {
 //   );
 // }
 
-function About() {
-  return <h2>About</h2>;
+function About({sw}) {
+  return (
+    <>
+    <h2>About</h2>
+    <button onClick={sw.onClickAskUserPermission}>yeet</button>
+    <button onClick={sw.onClickSubscribeToPushNotification}>uhh</button>
+    lol
+    {sw.isPushNotificationSupported}
+    {/* <button onClick={sw.onClickSubscribeToPushNotification}>yeah</button> */}
+
+
+    </>
+  )
+  
 }
 
 function Users() {

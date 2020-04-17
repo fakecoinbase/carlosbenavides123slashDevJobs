@@ -1,5 +1,5 @@
 import "./Home.scss";
-import React from "react";
+import React, {useEffect} from "react";
 // import Honey from "./unnamed.png";
 import Card from "../Card/Card";
 function Home({joblist}) {
