@@ -1,9 +1,11 @@
 .card {
-  background-color: dodgerblue;
-  color: white;
+  background-color: white;
+  color: #471f7b;
   padding: 1rem;
   word-wrap: break-word;
-
+  border: 0.5px solid #cabcbca6;
+  border-radius: 2px;
+  position: relative;
   // height: 8rem;
   // display: flex;
   // justify-content: space-between;
@@ -20,8 +22,26 @@
   }
 }
 
+.info {
+  font-weight: bold;
+  font-size: large;
+  padding-bottom: 20px;
+}
+.apply_info {
+  position: absolute;
+  bottom: 0px;
+  width: 90%;
+  padding-top: 10px;
+  margin-top: 10px;
+  padding-bottom: 10px;
+  margin: 0;
+}
 
 .card .apply_info {
   margin-top: 4px;
   margin-bottom: 0
+}
+
+.card:hover {
+  cursor: pointer;
 }

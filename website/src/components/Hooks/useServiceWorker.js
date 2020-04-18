@@ -7,11 +7,14 @@ import {
   getUserSubscription
 } from "../../push-notif";
 import { messaging } from "../../firebase";
+
+import {useLocalStorage} from "./useLocalStorage"
+
 const pushNotificationSupported = isPushNotificationSupported();
 
 export function useServiceWorker() {
   const [userConsent, setUserConsent] = useState(Notification.permission);
-  const [fcmID, setFCMID] = useState(null);
+  const [fcmID, setFCMID] = useLocalStorage('fcmID', '')
   const [pushServiceSubID, setPushServiceSubID] = useState();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -22,16 +25,18 @@ export function useServiceWorker() {
         navigator.serviceWorker
           .register("./firebase-messaging-sw.js")
           .then(_ => {
-            messaging
+            if (fcmID == ""){
+              messaging
               .requestPermission()
               .then(async function() {
                 const token = await messaging.getToken();
                 setFCMID(token);
-                console.log(token);
+                console.log(token, "here");
               })
               .catch(function(err) {
                 console.log("Unable to get permission to notify.", err);
               });
+            }
           });
       }
     }

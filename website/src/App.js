@@ -6,20 +6,9 @@ export default function App() {
   const joblist = useJobs();
   const sw = useServiceWorker();
 
-  // useEffect(() => {
-  //   messaging.requestPermission()
-  //   .then(async function() {
-  //       const token = await messaging.getToken();
-  //       console.log(token)
-  //   })
-  //   .catch(function(err) {
-  //     console.log("Unable to get permission to notify.", err);
-  //   });
-  // })
-
   return (
     <>
-      <NavBar joblist={joblist.jobs} sw={sw} />
+      <NavBar joblist={joblist} sw={sw} />
     </>
   );
 }

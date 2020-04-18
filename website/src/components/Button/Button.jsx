@@ -10,15 +10,21 @@ const StyledButton = styled.div`
     padding-right: 1rem;
 
     ${({btype}) => btype === "joblink" && `
-        outline: .1rem solid white;
-        color: #CEF074;
+        border: 2px solid #1cce7cab;
+        color: #7d846c;
         float:right;
         &:hover{
-            outline: .1rem solid #CEF074;
-            background-color: #CEF074;
-            cursor:pointer;
-            color: #484CF6;
+            border: .1rem solid #7d846c;
+            background-color: #7d846c;
+            color: white;
         }
+    `}
+
+    ${({btype}) => btype === "dropdown" && `
+        border: 1px solid gray;
+        cursor: pointer;
+        padding-left: 0rem;
+        padding-right: 0rem;
     `}
 `
 function Button({btype, onClick, onMouseEnter, text}) {

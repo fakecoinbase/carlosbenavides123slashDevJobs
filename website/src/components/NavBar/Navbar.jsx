@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import "./Navbar.scss";
 import Home from "../Home/Home";
 import JobForm from "../JobForm/JobForm";
-
-function Navbar({joblist, sw}) {
-  console.log(sw)
+import NavDropdown from "../Dropdown/Dropdown";
+function Navbar({ joblist, sw }) {
+  console.log(sw);
   return (
     <>
       <Router>
@@ -32,16 +32,18 @@ function Navbar({joblist, sw}) {
                 renders the first one that matches the current URL. */}
         <Switch>
           <Route path="/about">
-            <About sw={sw}/>
+            <About sw={sw} />
           </Route>
           <Route path="/users">
             <Users />
           </Route>
           <Route path="/jobform">
-              <JobForm />
+            <JobForm />
           </Route>
           <Route path="/">
-            <Home joblist={joblist} />
+            <NavDropdown {...joblist}/>
+            <hr className="solid" />
+            <Home joblist={joblist.jobs} />
           </Route>
         </Switch>
       </Router>
@@ -105,20 +107,17 @@ function Navbar({joblist, sw}) {
 //   );
 // }
 
-function About({sw}) {
+function About({ sw }) {
   return (
     <>
-    <h2>About</h2>
-    <button onClick={sw.onClickAskUserPermission}>yeet</button>
-    <button onClick={sw.onClickSubscribeToPushNotification}>uhh</button>
-    lol
-    {sw.isPushNotificationSupported}
-    {/* <button onClick={sw.onClickSubscribeToPushNotification}>yeah</button> */}
-
-
+      <h2>About</h2>
+      <button onClick={sw.onClickAskUserPermission}>yeet</button>
+      <button onClick={sw.onClickSubscribeToPushNotification}>uhh</button>
+      lol
+      {sw.isPushNotificationSupported}
+      {/* <button onClick={sw.onClickSubscribeToPushNotification}>yeah</button> */}
     </>
-  )
-  
+  );
 }
 
 function Users() {

@@ -6,8 +6,8 @@ function Home({joblist}) {
   return (
     <div className="cards">
 
-      {joblist[0] && 
-        joblist[0].map((item) => 
+      {joblist && 
+        joblist.map((item) => 
           <Card key={item.uuid} {...item} />
         )
       }

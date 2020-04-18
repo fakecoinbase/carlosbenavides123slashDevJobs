@@ -32,6 +32,8 @@ func main() {
 	r.HandleFunc("/rest/api/v1/jobs/", controllers.GetJobs).Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/", controllers.CreateJob).Methods("POST")
 
+	// r.HandleFunc("/")
+
 	c.SubscribeTopics([]string{"new_job", "del_job"}, nil)
 	go http.ListenAndServe(":8080", r)
 

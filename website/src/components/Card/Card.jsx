@@ -12,7 +12,7 @@ function Card({job_uuid, job_title, job_link, job_posted, job_found, company_nam
     window.open(job_link, '_blank')
   }
   return (
-      <div className="card">
+      <div className="card" onClick={handleJobClick}>
         <span>
           <img
             src={
@@ -34,7 +34,7 @@ function Card({job_uuid, job_title, job_link, job_posted, job_found, company_nam
         {job_posted && <>Posted on: {moment.unix(job_posted).format("MM/DD/YYYY")}</>
         }
         {!job_posted && <span>Job Found on: {moment.unix(job_found)}</span>}
-        <Button btype="joblink" text={"Apply"} onClick={handleJobClick}/>
+        <Button btype="joblink" text={"Apply"}/>
 
         </span>
 
