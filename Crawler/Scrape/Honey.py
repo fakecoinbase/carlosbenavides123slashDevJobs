@@ -7,12 +7,12 @@ import time
 from protos.create_job import create_job
 
 WANTED = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", "Internship"]
-def Honey(UUID, Name, Website, query, utils, kafka):
-    page = requests.get(Website)
+def Honey(uuid, company_name, company_website_scrape, query, utils, kafka):
+    page = requests.get(company_website_scrape)
     json_page = page.json()
     _reduce = json_page["departments"]
 
-    active_jobs = query.get_active_remembered_jobs(UUID)
+    active_jobs = query.get_active_remembered_jobs(uuid)
     check_job_list = utils.convert_active_jobs_to_dict(active_jobs)
 
     # print(json_page)
@@ -27,22 +27,21 @@ def Honey(UUID, Name, Website, query, utils, kafka):
                 if delta > 30:
                     print("forget about it")
                     break
-
+                job_location = job["location"]["name"]
                 location = job["location"]["name"].replace(" ", "%")
                 title = job["title"].replace(" ","%")
-                job_id = UUID + "_%_" + title + "_%_" + location
-                isActive = query.check_active_job(job_id, UUID)
+                job_id = uuid + "_%_" + title + "_%_" + location
+                is_active = query.check_active_job(job_id, uuid)
 
-                if len(isActive) == 0:
+                if len(is_active) == 0:
                     # send to Jobs Table
-                    job_title = set(job["title"].lower().split(" "))
-                    experience_level = utils.determine_experience_level(job_title)                    
+                    experience_level = utils.determine_experience_level(job["title"])                    
                     provided_id = str(job["id"])
-                    Joblink = job["absolute_url"]
+                    job_link = job["absolute_url"]
                     time_posted = int(time.mktime(company_listing_date.timetuple()))
                     active = 1
 
-                    data = [job_id, UUID, Joblink, Website, provided_id, Name] + experience_level + [active, time_posted]
+                    data = [job_id, uuid, job_link, company_website_scrape, provided_id, company_name, experience_level, active, time_posted, job_location]
                     job = create_job(data)
                     query.insert_new_job( job )
                     query.insert_new_remembered_job( job )

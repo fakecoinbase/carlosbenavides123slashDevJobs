@@ -14,7 +14,7 @@ func GetJobs() ([]*Job, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	res, err := db.Query(`select j.job_uuid, j.job_title, j.job_link, j.job_posted, j.job_found, j.job_idx, c.name, c.cloudinary, l.job_level
+	res, err := db.Query(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, j.job_found, j.job_idx, c.company_name, c.company_cloudinary, l.job_level
 	from companies c
 	inner join jobs_pivot jp on jp.company_uuid = c.company_uuid
 	inner join jobs j on jp.job_uuid = j.job_uuid
@@ -26,11 +26,11 @@ func GetJobs() ([]*Job, *utils.ApplicationError) {
 	job := []*Job{}
 
 	for res.Next() {
-		var JobUUID, JobTitle, JobLink string
+		var JobUUID, JobTitle, JobLink, JobLocation string
 		var JobPosted, JobFound, JobIdx int64
 		var CompanyName, Cloudinary, JobLevel string
 
-		err = res.Scan(&JobUUID, &JobTitle, &JobLink, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
+		err = res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -38,6 +38,7 @@ func GetJobs() ([]*Job, *utils.ApplicationError) {
 		jobRow.JobUUID = JobUUID
 		jobRow.JobTitle = JobTitle
 		jobRow.JobLink = JobLink
+		jobRow.JobLocation = JobLocation
 		jobRow.JobPosted = JobPosted
 		jobRow.JobFound = JobFound
 		jobRow.JobIdx = JobIdx
@@ -62,7 +63,7 @@ func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	res, dbPrepareErr := db.Prepare(`INSERT INTO companies(company_uuid, name, cloudinary) 
+	res, dbPrepareErr := db.Prepare(`INSERT INTO companies(company_uuid, company_name, company_cloudinary) 
 				VALUES (?, ?, ?)
 				`)
 	uuid, dbPrepareErr := uuid.NewV4()
@@ -73,7 +74,7 @@ func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
 
 	db2 := dbconf.DbConnToScrappy()
 	defer db2.Close()
-	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO Companies(UUID, Name, Website)
+	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO companies(company_uuid, company_name, company_scrape_website)
 										VALUES(?, ?, ?)`)
 	if dbPrepareErr2 != nil {
 		panic(error(dbPrepareErr2))
@@ -86,8 +87,7 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_posted, j.job_found, j.job_idx, 
-		c.name, c.cloudinary, l.job_level 
+	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, j.job_found, j.job_idx, c.company_name, c.company_cloudinary, l.job_level
 		from companies c inner join jobs_pivot jp on jp.company_uuid = c.company_uuid 
 		AND c.company_uuid=?
 		inner join jobs j on jp.job_uuid = j.job_uuid 
@@ -107,11 +107,11 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 	job := []*Job{}
 
 	for res.Next() {
-		var JobUUID, JobTitle, JobLink string
+		var JobUUID, JobTitle, JobLink, JobLocation string
 		var JobPosted, JobFound, JobIdx int64
 		var CompanyName, Cloudinary, JobLevel string
 
-		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
+		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
 
 		if scanErr != nil {
 			panic(scanErr.Error())
@@ -121,6 +121,7 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 		jobRow.JobUUID = JobUUID
 		jobRow.JobTitle = JobTitle
 		jobRow.JobLink = JobLink
+		jobRow.JobLocation = JobLocation
 		jobRow.JobPosted = JobPosted
 		jobRow.JobFound = JobFound
 		jobRow.JobIdx = JobIdx
@@ -137,7 +138,7 @@ func GetCompanyList() ([]*Company, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	res, queryErr := db.Query(`select c.name, c.company_uuid from companies c`)
+	res, queryErr := db.Query(`select c.company_name, c.company_uuid from companies c`)
 	if queryErr != nil {
 		panic(queryErr.Error())
 	}

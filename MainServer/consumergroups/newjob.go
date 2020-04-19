@@ -25,32 +25,20 @@ func Addnewjob(msg *kafka.Message) {
 	if err != nil {
 		panic(err.Error())
 	}
-	insForm1.Exec(job.JobID, job.Company_UUID)
+	insForm1.Exec(job.JobUUID, job.CompanyUUID)
 
 	insForm2, err := db.Prepare(`INSERT INTO 
-							jobs(job_uuid, company_uuid, job_title, job_link,
+							jobs(job_uuid, company_uuid, job_title, job_link, job_location,
 								job_posted, job_found, active, experience_level)
-							VALUES(?,?, ?, ?, ?, ?, ?, ?)`)
+							VALUES(?,?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		panic(err.Error())
 	}
-	splitString := strings.Split(job.JobID, "_%_")
+	splitString := strings.Split(job.JobUUID, "_%_")
 	jobTitle := strings.ReplaceAll(splitString[1], "%", " ")
+	jobLocation := strings.ReplaceAll(splitString[2], "%", " ")
 
-	var level = 1
-
-	if job.Entry {
-		level = 1
-	} else if job.Entry {
-		level = 2
-	} else if job.Mid {
-		level = 3
-	} else if job.Senior {
-		level = 4
-	} else {
-		level = 5
-	}
-	insForm2.Exec(job.JobID, job.Company_UUID, jobTitle, job.JobLink, job.JobPosted, msg.Timestamp.Unix(), job.Active, level)
+	insForm2.Exec(job.JobUUID, job.CompanyUUID, jobTitle, job.JobLink, jobLocation, job.JobPosted, msg.Timestamp.Unix(), job.Active, job.ExperienceLevel)
 	defer db.Close()
 
 }

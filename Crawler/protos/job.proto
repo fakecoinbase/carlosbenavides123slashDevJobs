@@ -3,17 +3,14 @@ syntax = "proto3";
 package main;
 
 message Job {
-    string JobID = 1;
-    string Company_UUID = 2;
+    string JobUUID = 1;
+    string CompanyUUID = 2;
     string JobLink = 3;
     string DefaultLink = 4;
     string ProvidedID = 5;
     string CompanyName = 6;
-    bool Internship = 7;
-    bool Entry = 8;
-    bool Mid = 9;
-    bool Senior = 10;
-    bool Manager = 11;
-    bool Active = 12;
-    int64 JobPosted = 13;
+    string Location = 7;
+    int64 ExperienceLevel = 8;
+    bool Active = 9;
+    int64 JobPosted = 10;
 }

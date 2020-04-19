@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='job.proto',
   package='main',
   syntax='proto3',
-  serialized_pb=_b('\n\tjob.proto\x12\x04main\"\xed\x01\n\x03Job\x12\r\n\x05JobID\x18\x01 \x01(\t\x12\x14\n\x0c\x43ompany_UUID\x18\x02 \x01(\t\x12\x0f\n\x07JobLink\x18\x03 \x01(\t\x12\x13\n\x0b\x44\x65\x66\x61ultLink\x18\x04 \x01(\t\x12\x12\n\nProvidedID\x18\x05 \x01(\t\x12\x13\n\x0b\x43ompanyName\x18\x06 \x01(\t\x12\x12\n\nInternship\x18\x07 \x01(\x08\x12\r\n\x05\x45ntry\x18\x08 \x01(\x08\x12\x0b\n\x03Mid\x18\t \x01(\x08\x12\x0e\n\x06Senior\x18\n \x01(\x08\x12\x0f\n\x07Manager\x18\x0b \x01(\x08\x12\x0e\n\x06\x41\x63tive\x18\x0c \x01(\x08\x12\x11\n\tJobPosted\x18\r \x01(\x03\x62\x06proto3')
+  serialized_pb=_b('\n\tjob.proto\x12\x04main\"\xc8\x01\n\x03Job\x12\x0f\n\x07JobUUID\x18\x01 \x01(\t\x12\x13\n\x0b\x43ompanyUUID\x18\x02 \x01(\t\x12\x0f\n\x07JobLink\x18\x03 \x01(\t\x12\x13\n\x0b\x44\x65\x66\x61ultLink\x18\x04 \x01(\t\x12\x12\n\nProvidedID\x18\x05 \x01(\t\x12\x13\n\x0b\x43ompanyName\x18\x06 \x01(\t\x12\x10\n\x08Location\x18\x07 \x01(\t\x12\x17\n\x0f\x45xperienceLevel\x18\x08 \x01(\x03\x12\x0e\n\x06\x41\x63tive\x18\t \x01(\x08\x12\x11\n\tJobPosted\x18\n \x01(\x03\x62\x06proto3')
 )
 
 
@@ -33,14 +33,14 @@ _JOB = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='JobID', full_name='main.Job.JobID', index=0,
+      name='JobUUID', full_name='main.Job.JobUUID', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='Company_UUID', full_name='main.Job.Company_UUID', index=1,
+      name='CompanyUUID', full_name='main.Job.CompanyUUID', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -75,50 +75,29 @@ _JOB = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='Internship', full_name='main.Job.Internship', index=6,
-      number=7, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='Location', full_name='main.Job.Location', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='Entry', full_name='main.Job.Entry', index=7,
-      number=8, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
+      name='ExperienceLevel', full_name='main.Job.ExperienceLevel', index=7,
+      number=8, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='Mid', full_name='main.Job.Mid', index=8,
+      name='Active', full_name='main.Job.Active', index=8,
       number=9, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='Senior', full_name='main.Job.Senior', index=9,
-      number=10, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='Manager', full_name='main.Job.Manager', index=10,
-      number=11, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='Active', full_name='main.Job.Active', index=11,
-      number=12, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='JobPosted', full_name='main.Job.JobPosted', index=12,
-      number=13, type=3, cpp_type=2, label=1,
+      name='JobPosted', full_name='main.Job.JobPosted', index=9,
+      number=10, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -136,7 +115,7 @@ _JOB = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=20,
-  serialized_end=257,
+  serialized_end=220,
 )
 
 DESCRIPTOR.message_types_by_name['Job'] = _JOB

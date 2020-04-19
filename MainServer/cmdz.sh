@@ -21,6 +21,7 @@ CREATE TABLE jobs (
     company_uuid varchar(255),
     job_title varchar(255),
     job_link varchar(255),
+    job_location varchar(255),
     job_posted varchar(255),
     job_found varchar(255),
     active TINYINT(1),
@@ -33,8 +34,8 @@ CREATE TABLE jobs (
 
 CREATE TABLE companies (
     company_uuid varchar(255) NOT NULL,
-    name varchar(255) NOT NULL,
-    cloudinary varchar(255) NOT NULL,
+    company_name varchar(255) NOT NULL,
+    company_cloudinary varchar(255) NOT NULL,
     PRIMARY KEY(company_uuid)
 );
 
@@ -50,8 +51,8 @@ INSERT INTO levels(job_level) VALUES ("Mid");
 INSERT INTO levels(job_level) VALUES ("Senior");
 INSERT INTO levels(job_level) VALUES ("Manager");
 
-INSERT INTO companies(company_uuid, name, cloudinary) 
-VALUES ("50b3dae9-0bec-456f-af6d-61a8fabe0935", "Honey", "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png");
+# INSERT INTO companies(company_uuid, name, cloudinary) 
+# VALUES ("50b3dae9-0bec-456f-af6d-61a8fabe0935", "Honey", "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png");
 
 select j.job_uuid
 from jobs j

@@ -28,15 +28,9 @@ def main():
         cursor = None
         if connection.is_connected():
             cursor = connection.cursor()
-
-        if not cursor:
-            print("LOG: ERROR CURSOR ISN'T ACTIVE")
-        else:
-            print("!!!!!!!!!!!!!!!!1")
-
-        drop_all_tables(cursor)
-        run_migrations(cursor)
-        addHoney(cursor)
+        # drop_all_tables(cursor)
+        # run_migrations(cursor)
+        # addHoney(cursor)
 
         query = Query(cursor)
         utils = Utils()
@@ -45,8 +39,8 @@ def main():
 
         companies = query.get_all_companies()
 
-        for UUID, Name, Website in companies:
-            Honey(UUID, Name, Website, query, utils, kafka)
+        for company_uuid, company_name, company_scrape_website in companies:
+            Honey(company_uuid, company_name, company_scrape_website, query, utils, kafka)
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:

@@ -4,6 +4,7 @@ type Job struct {
 	JobUUID     string `json:"job_uuid"`
 	JobTitle    string `json:"job_title"`
 	JobLink     string `json:"job_link"`
+	JobLocation string `json:"job_location"`
 	JobPosted   int64  `json:"job_posted"`
 	JobFound    int64  `json:"job_found"`
 	JobIdx      int64  `json:"cursor_idx"`
