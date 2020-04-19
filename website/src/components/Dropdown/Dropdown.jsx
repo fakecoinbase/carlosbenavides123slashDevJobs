@@ -29,6 +29,21 @@ function NavDropdown({ setCompany, setLocation, setExperience }) {
     }
   }
 
+  function handleCompany(e) {
+    console.log("event")
+    console.log(e)
+    if (e === null) {
+      console.log("null")
+      setCompany('')
+
+      console.log("ye")
+    }
+    if (e !== null && e) {
+      console.log(e["value"])
+      setCompany(e["value"])
+    }
+  }
+
   let location = [{ value: "Los Angeles", label: "Los Angeles" }];
   let companies = [
     { value: "Honey", label: "Honey" },
@@ -55,6 +70,14 @@ function NavDropdown({ setCompany, setLocation, setExperience }) {
         classNamePrefix="select"
         placeholder="Experience"
         onChange={handleExperience}
+        isClearable={true}
+      />
+      <Select
+        options={companies}
+        className="dropdown"
+        classNamePrefix="select"
+        placeholder="Companies"
+        onChange={handleCompany}
         isClearable={true}
       />
     </div>

@@ -2,6 +2,9 @@
   display: flex;
   padding: 0 10%;
   padding-bottom: 1em;
+  margin: auto;
+  max-width: 1000px;
+  justify-content: flex-start;
 }
 .dropdown{
   margin-left: .2em;

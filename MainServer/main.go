@@ -32,7 +32,8 @@ func main() {
 	r.HandleFunc("/rest/api/v1/jobs/", controllers.GetJobs).Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/", controllers.CreateJob).Methods("POST")
 
-	// r.HandleFunc("/")
+	r.HandleFunc("/rest/api/v1/jobs/company/search/{companyUUID:[A-Za-z0-9_@./#&+-]*$}", controllers.GetJobsByCompany).Methods("GET")
+	r.HandleFunc("/rest/api/v1/jobs/company/list/", controllers.GetCompanyList).Methods("GET")
 
 	c.SubscribeTopics([]string{"new_job", "del_job"}, nil)
 	go http.ListenAndServe(":8080", r)

@@ -17,3 +17,8 @@ type NewCompany struct {
 	CompanyWebsite string `json:"company_website"`
 	Cloudinary     string `json:"cloudinary"`
 }
+
+type Company struct {
+	CompanyName string `json:"company_name"`
+	CompanyUUID string `json:"company_uuid"`
+}
