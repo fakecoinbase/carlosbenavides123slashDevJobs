@@ -13,6 +13,7 @@ from Utils.Utils import Utils
 from kafka_utils.setup_kafka import KafkaMsg
 
 from Scrape.Honey import Honey
+from Scrape.Twilio import Twilio
 
 def addHoney(cursor):
     UUID = "50b3dae9-0bec-456f-af6d-61a8fabe0935"
@@ -40,7 +41,11 @@ def main():
         companies = query.get_all_companies()
 
         for company_uuid, company_name, company_scrape_website in companies:
-            Honey(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+            if company_name == "Honey":
+                Honey(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+            if company_name == "Twilio":
+                Twilio(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:

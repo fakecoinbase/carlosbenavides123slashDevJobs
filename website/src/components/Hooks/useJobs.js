@@ -76,7 +76,7 @@ export function useJobs() {
     // otherwise filter as much w/o calling api
     // assume companyPage state is empty
     if (company === "" && experience !== "" && location === "") {
-      setJobs(filterByExperience(experience))
+      setJobs(filterByExperience(homePage, experience))
     } else if (company === "" && experience === "" && location !== "") {
       setJobs(filterByLocation(homePage, location))
     } else if(company === "" && experience !== "" && location !== "") {
