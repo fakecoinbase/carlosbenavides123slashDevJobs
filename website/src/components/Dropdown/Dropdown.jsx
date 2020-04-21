@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Button from "../Button/Button";
+import {isMobile} from 'react-device-detect';
 import "./Dropdown.scss";
 // import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
@@ -7,41 +8,35 @@ import Select from "react-select";
 
 function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }) {
 
-  console.log(companyDropdown)
+  const [isDeviceMobile, setIsDeviceMobile] = useState(false)
+  
+  useEffect(() => {
+    setIsDeviceMobile(isMobile)
+  }, [isMobile])
+
   function handleLocation(e) {
-    console.log("location event", e)
     if (e === null) {
       setLocation('')
-      console.log("location event 1")
     }
     if (e !== null) {
       setLocation(e["value"])
-      console.log("location event 2")
     }
   }
 
   function handleExperience(e) {
-    console.log("event")
-    console.log(e)
     if (e === null) {
-      console.log("null")
       setExperience('')
     }
     if (e !== null) {
-      console.log(e["value"], "experience event 2")
       setExperience(e["value"])
     }
   }
 
   function handleCompany(e) {
-    console.log("event")
-    console.log(e)
     if (e === null) {
-      console.log("null")
       setCompany('')
     }
     if (e !== null) {
-      console.log(e["value"])
       setCompany(e["value"])
     }
   }
@@ -53,15 +48,14 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     { value: "Mid", label: "Mid" },
     { value: "Senior", label: "Senior" },
     { value: "Manager", label: "Manager" },
-
   ];
-
+console.log(isDeviceMobile, "is mobile?")
   return (
-    <div className="navDropdown">
+    <div className={isDeviceMobile ? "" : "navDropdown"}>
       <Select
         name="colors"
         options={location}
-        className="dropdown"
+        className={isDeviceMobile ? "" : "navDropdownRegular"}
         classNamePrefix="select"
         placeholder="Location"
         onChange={handleLocation}
@@ -69,7 +63,7 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
       />
       <Select
         options={experience}
-        className="dropdown"
+        className={isDeviceMobile ? "" : "navDropdownRegular"}
         classNamePrefix="select"
         placeholder="Experience"
         onChange={handleExperience}
@@ -77,7 +71,7 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
       />
       <Select
         options={companyDropdown}
-        className="dropdown"
+        className={isDeviceMobile ? "" : "navDropdownRegular"}
         classNamePrefix="select"
         placeholder="Companies"
         onChange={handleCompany}

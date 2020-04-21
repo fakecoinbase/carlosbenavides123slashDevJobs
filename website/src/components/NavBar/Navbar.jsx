@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 // import Modal from "react-modal";
 import "./Navbar.scss";
@@ -7,13 +7,20 @@ import JobForm from "../JobForm/JobForm";
 import NavDropdown from "../Dropdown/Dropdown";
 function Navbar({ joblist, sw }) {
   console.log(sw);
+  const [hamburgerClicked, setHamburgerClicked] = useState(false)
+  function handleHamburger(e) {
+    setHamburgerClicked(!hamburgerClicked)
+    console.log(e, "hamburger event")
+  }
   return (
     <>
       <Router>
-        <header>
+        <div className={hamburgerClicked ? "topnav responsive" : "topnav"} id="topnav">
           <span className="logo">Logo</span>
-          <nav>
-            <ul className="nav__links">
+          <span className="icon" onClick={handleHamburger}>&#9776;</span>
+
+          <div className="dropdown">
+            <div className="dropdown-content">
               <li>
                 <Link to="/">Home</Link>
               </li>
@@ -23,9 +30,9 @@ function Navbar({ joblist, sw }) {
               <li>
                 <Link to="/jobform">Add A Company</Link>
               </li>
-            </ul>
-          </nav>
-        </header>
+            </div>
+          </div>
+        </div>
         <hr className="solid" />
 
         {/* A <Switch> looks through its children <Route>s and
