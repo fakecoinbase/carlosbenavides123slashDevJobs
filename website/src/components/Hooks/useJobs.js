@@ -10,6 +10,26 @@ export function useJobs() {
   const [experience, setExperience] = useState("");
   const [company, setCompany] = useState("");
 
+  const [companyDropdown, setCompanyDropdown] = useState([])
+  const [experienceDropdown, setExperienceDropdown] = useState([])
+
+  const [companyUUID, setCompanyUUID] = useState(new Map())
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/rest/api/v1/jobs/company/list/").then(res => {
+      let temp = []
+      var myMap = new Map();
+      for(var obj of res.data) {
+        temp.push({value:obj["company_name"], label:obj["company_name"]})
+        myMap.set(obj["company_name"], obj["company_uuid"])
+      }
+      setCompanyDropdown(temp)
+      setCompanyUUID(myMap)
+      console.log(myMap)
+    })
+  }, [])
+
+
   useEffect(() => {
     axios.get("http://localhost:8080/rest/api/v1/jobs/").then(res => {
       setJobs(res.data);
@@ -19,7 +39,10 @@ export function useJobs() {
   useEffect(() => {
     // rest api call
     if (company !== "") {
-      console.log("1");
+      console.log(companyUUID, company, "TEST")
+      let uuid = companyUUID.get(company)
+      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
+      .then(res => setJobs(res.data))
     }
     var filtered = [];
 
@@ -47,6 +70,8 @@ export function useJobs() {
     location,
     setLocation,
     experience,
-    setExperience
+    setExperience,
+    companyDropdown,
+    setCompanyDropdown
   };
 }

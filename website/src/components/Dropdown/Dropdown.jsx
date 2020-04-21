@@ -5,8 +5,9 @@ import "./Dropdown.scss";
 import "react-dropdown/style.css";
 import Select from "react-select";
 
-function NavDropdown({ setCompany, setLocation, setExperience }) {
+function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }) {
 
+  console.log(companyDropdown)
   function handleLocation(e) {
     if (e === null) {
       setLocation('')
@@ -50,7 +51,7 @@ function NavDropdown({ setCompany, setLocation, setExperience }) {
     { value: "Pinterest", label: "Pinterest" }
   ];
   let experience = [
-    { value: "Intern", label: "Internship" },
+    { value: "Intern", label: "Intern" },
     { value: "Entry", label: "Entry" }
   ];
   return (
@@ -73,7 +74,7 @@ function NavDropdown({ setCompany, setLocation, setExperience }) {
         isClearable={true}
       />
       <Select
-        options={companies}
+        options={companyDropdown}
         className="dropdown"
         classNamePrefix="select"
         placeholder="Companies"

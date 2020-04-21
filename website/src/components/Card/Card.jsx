@@ -3,10 +3,7 @@ import "./Card.scss";
 import Button from "../Button/Button"
 import moment from 'moment'
 
-function Card({job_uuid, job_title, job_link, job_posted, job_found, company_name, cloudinary, level}) {
-
-  var res = job_uuid.split("_%_")
-  var location = res[2].replace(/%/g, ' ')
+function Card({job_uuid, job_title, job_link, job_location, job_posted, job_found, company_name, cloudinary, level}) {
 
   function handleJobClick(e) {
     window.open(job_link, '_blank')
@@ -21,7 +18,7 @@ function Card({job_uuid, job_title, job_link, job_posted, job_found, company_nam
             className="icon"
             alt="company"
           />
-          {location}
+          {job_location}
         </span>
         <br />
         <div className="info">
