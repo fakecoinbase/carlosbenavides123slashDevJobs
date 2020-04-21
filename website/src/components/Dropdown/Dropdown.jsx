@@ -9,11 +9,14 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
 
   console.log(companyDropdown)
   function handleLocation(e) {
+    console.log("location event", e)
     if (e === null) {
       setLocation('')
+      console.log("location event 1")
     }
-    if (e !== null && e[0]) {
-      setLocation(e[0]["value"])
+    if (e !== null) {
+      setLocation(e["value"])
+      console.log("location event 2")
     }
   }
 
@@ -24,8 +27,8 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
       console.log("null")
       setExperience('')
     }
-    if (e !== null && e) {
-      console.log(e["value"])
+    if (e !== null) {
+      console.log(e["value"], "experience event 2")
       setExperience(e["value"])
     }
   }
@@ -36,24 +39,23 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     if (e === null) {
       console.log("null")
       setCompany('')
-
-      console.log("ye")
     }
-    if (e !== null && e) {
+    if (e !== null) {
       console.log(e["value"])
       setCompany(e["value"])
     }
   }
 
-  let location = [{ value: "Los Angeles", label: "Los Angeles" }];
-  let companies = [
-    { value: "Honey", label: "Honey" },
-    { value: "Pinterest", label: "Pinterest" }
-  ];
+  let location = [{ value: "Los Angeles", label: "Los Angeles"}, { value:"San Francisco", label:"San Francisco"}];
   let experience = [
     { value: "Intern", label: "Intern" },
-    { value: "Entry", label: "Entry" }
+    { value: "Entry", label: "Entry" },
+    { value: "Mid", label: "Mid" },
+    { value: "Senior", label: "Senior" },
+    { value: "Manager", label: "Manager" },
+
   ];
+
   return (
     <div className="navDropdown">
       <Select

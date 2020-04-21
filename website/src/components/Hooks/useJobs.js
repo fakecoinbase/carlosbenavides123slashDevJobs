@@ -11,9 +11,13 @@ export function useJobs() {
   const [company, setCompany] = useState("");
 
   const [companyDropdown, setCompanyDropdown] = useState([])
-  const [experienceDropdown, setExperienceDropdown] = useState([])
-
   const [companyUUID, setCompanyUUID] = useState(new Map())
+
+  const [homePage, setHomePage] = useState([])
+  const [companyPage, setCompanyPage] = useState([])
+
+  const [loading, setLoading] = useState(false)
+
 
   useEffect(() => {
     axios.get("http://localhost:8080/rest/api/v1/jobs/company/list/").then(res => {
@@ -25,42 +29,75 @@ export function useJobs() {
       }
       setCompanyDropdown(temp)
       setCompanyUUID(myMap)
-      console.log(myMap)
     })
   }, [])
 
 
   useEffect(() => {
+    setLoading(true)
     axios.get("http://localhost:8080/rest/api/v1/jobs/").then(res => {
       setJobs(res.data);
+      setHomePage(res.data)
+      setLoading(false)
     });
   }, []);
 
   useEffect(() => {
-    // rest api call
-    if (company !== "") {
-      console.log(companyUUID, company, "TEST")
-      let uuid = companyUUID.get(company)
-      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
-      .then(res => setJobs(res.data))
+    if (location === "" && experience === "" && company == "") {
+      setJobs(homePage)
+      setCompanyPage([])
+      return
     }
-    var filtered = [];
+    // rest api call if companyPage doesn't equal to company name
+    if (company !== "" && experience === "" && location === "") {
+      if(companyPage.length != 0) {
+        if(companyPage[0].company_name === company) {
+          setJobs(companyPage)
+          return
+        }
+      }
+      let uuid = companyUUID.get(company)
+      setLoading(true)
+      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
+        .then((res) =>{
+          setJobs(res.data)
+          setCompanyPage(res.data)
+          setLoading(false)
+        })
+    } else if (company !== "" && experience !== "" && location === "") {
+      setJobs(filterByExperience(companyPage, experience))
+    } else if (company !== "" && experience === "" && location !== "") {
+      setJobs(filterByLocation(companyPage, location))
+    } else if (company !== "" && experience !== "" && location !== "") {
+      setJobs(filterByExperienceAndLocation(companyPage, experience, location))
+    }
+    // var filtered = [];
 
     // otherwise filter as much w/o calling api
-    if (company === "" && (experience !== "" || location !== "")) {
-      setNonFilteredJobs(jobs);
-
-      filtered = jobs.filter(i => i.level == experience);
-
-      if (location !== "") {
-        // filtered = jobs.filter( i => i.location )
-      }
-      console.log(filtered);
-      setJobs(filtered);
-    } else if (experience === "" && location === "") {
-      setJobs(nonFilteredJobs);
+    // assume companyPage state is empty
+    if (company === "" && experience !== "" && location === "") {
+      setJobs(filterByExperience(experience))
+    } else if (company === "" && experience === "" && location !== "") {
+      setJobs(filterByLocation(homePage, location))
+    } else if(company === "" && experience !== "" && location !== "") {
+      setJobs(filterByExperienceAndLocation(homePage, experience, location))
     }
   }, [company, location, experience]);
+
+  function filterByExperience(data, experience) {
+    return data.filter(i => i.level === experience)
+  }
+
+  function filterByLocation(data, location) {
+    return data.filter(i => i.job_location.includes(location))
+  }
+
+  function filterByExperienceAndLocation(data, experience, location) {
+    let filtered = []
+    filtered = data.filter(i => i.level === experience)
+    filtered = filtered.filter(i => i.job_location.includes(location))
+    return filtered
+  }
 
   return {
     jobs,
@@ -72,6 +109,8 @@ export function useJobs() {
     experience,
     setExperience,
     companyDropdown,
-    setCompanyDropdown
+    setCompanyDropdown,
+    loading,
+    setLoading
   };
 }
