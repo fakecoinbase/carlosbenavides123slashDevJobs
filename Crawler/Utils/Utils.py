@@ -1,11 +1,11 @@
 class Utils:
     def __init__(self):
         # Levels
-        self.Manager = set(["manager"])
-        self.Senior = set(["principle", "senior"])
-        self.Mid = set(["mid"])
-        self.Entry = set(["entry", "junior", "new", "grad", "associate"])
-        self.Intern = set(["internship", "intern"])
+        self.Manager = ["manager", "lead", "ceo", "chief", "officer"]
+        self.Senior = ["principal", "senior", "sr."]
+        self.Mid = ["mid", "engineerii", "engineeriii", "engineer2", "engineer3"]
+        self.Entry = ["entry", "junior", "new", "grad", "associate", "engineeri", "engineer1"]
+        self.Intern = ["intern", "internship"]
     
     def convert_active_jobs_to_dict(self, active_jobs):
         if not active_jobs:
@@ -24,15 +24,17 @@ class Utils:
         job_title = job_title.lower()
         job_title = job_title.replace(" ", "")
 
-        if "intern" in job_title:
-            pass
-        elif "manager" in job_title:
-            experience_level = 5
-        elif "senior" in job_title:
-            experience_level = 4
-        elif "mid" in job_title:
-            experience_level = 3
-        else:
-            experience_level = 2
-
-        return experience_level
+        for name in self.Intern:
+            if name in job_title:
+                return 1
+        for name in self.Mid:
+            if name in job_title:
+                return 3
+        for name in self.Senior:
+            if name in job_title:
+                return 4
+        for name in self.Manager:
+            if name in job_title:
+                return 5
+        # default entry
+        return 2
