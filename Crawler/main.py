@@ -17,6 +17,8 @@ from Scrape.Twilio import Twilio
 from Scrape.Asana import Asana
 from Scrape.Coinbase import Coinbase
 from Scrape.SquareSpace import SquareSpace
+from Scrape.AppLovin import AppLovin
+from Scrape.Lever import Lever
 
 def addHoney(cursor):
     UUID = "50b3dae9-0bec-456f-af6d-61a8fabe0935"
@@ -46,14 +48,18 @@ def main():
         for company_uuid, company_name, company_scrape_website in companies:
             if company_name == "Honey":
                 Honey(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            if company_name == "Twilio":
+            elif company_name == "Twilio":
                 Twilio(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            if company_name == "Asana":
+            elif company_name == "Asana":
                 Asana(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            if company_name == "Coinbase":
+            elif company_name == "Coinbase":
                 Coinbase(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            if company_name == "SquareSpace":
+            elif company_name == "SquareSpace":
                 SquareSpace(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+            elif company_name == "AppLovin":
+                AppLovin(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+            else:
+                Lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
 
 
     except Error as e:

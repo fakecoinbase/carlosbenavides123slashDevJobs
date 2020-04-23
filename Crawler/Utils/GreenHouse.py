@@ -14,7 +14,7 @@ def extract_job_details(job, company_uuid, company_website_scrape, company_name,
         return
     job_uuid = company_uuid + "_%_" + job["title"].replace(" ", "%" ) + "_%_" +  job["location"]["name"].replace(" ", "%")
     is_active = query.check_active_job(job_uuid, company_uuid)
-    print(is_active, job_uuid)
+    print(is_active, job_uuid, company_name)
     # new job
     if len(is_active) == 0:
         experience_level = utils.determine_experience_level(job["title"])                    

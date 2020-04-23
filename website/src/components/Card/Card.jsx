@@ -4,7 +4,6 @@ import Button from "../Button/Button"
 import moment from 'moment'
 
 function Card({job_uuid, job_title, job_link, job_location, job_posted, job_found, company_name, cloudinary, level}) {
-
   function handleJobClick(e) {
     window.open(job_link, '_blank')
   }
@@ -28,9 +27,8 @@ function Card({job_uuid, job_title, job_link, job_location, job_posted, job_foun
         </div>
  
         <span className="apply_info">
-        {job_posted && <>Posted on: {moment.unix(job_posted).format("MM/DD/YYYY")}</>
-        }
-        {!job_posted && <span>Job Found on: {moment.unix(job_found)}</span>}
+        {job_posted != 0 && <>Posted on: {moment.unix(job_posted).format("MM/DD/YYYY")}</>}
+        {job_posted == 0 && <span>Job Found on: {moment.unix(job_found).format("MM/DD/YYYY")}</span>}
         <Button btype="joblink" text={"Apply"}/>
 
         </span>
