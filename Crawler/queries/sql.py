@@ -36,14 +36,8 @@ class Query(object):
         self.cursor.execute(SQL_INSERT_INTO_REMEMBERED_JOB, (job.JobUUID, 
                             job.CompanyUUID, job.ProvidedID, job.Active))
 
-    def deactivate_job(self, job_id, company_uuid, provided_id):
-        SQL_SOFT_DELETE_JOB = "UPDATE %s \
-                                SET active=%s \
-                                WHERE job_id=%s, \
-                                company_uuid=%s \
-                                provided_id=%s"
-        job_table_data = ("jobs", 0, job_id, company_uuid, provided_id)
-        self.cursor.execute(SQL_SOFT_DELETE_JOB, job_table_data)
-        rememb_table_data = ("remembered_jobs", 0, job_id, company_uuid)
-        self.cursor.execute(SQL_SOFT_DELETE_JOB, rememb_table_data, provided_id)
-
+    def deactivate_job(self, job_id, provided_id):
+        SQL_SOFT_DELETE_JOB = "UPDATE jobs SET active = %s WHERE job_id = %s AND provided_id = %s"
+        self.cursor.execute(SQL_SOFT_DELETE_JOB, (0, job_id, provided_id,))
+        SQL_SOFT_DELETE_JOB = "UPDATE remembered_jobs SET active = %s WHERE job_id = %s AND provided_id = %s"
+        self.cursor.execute(SQL_SOFT_DELETE_JOB, (0, job_id, provided_id,))

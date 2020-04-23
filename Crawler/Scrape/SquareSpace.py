@@ -3,16 +3,17 @@ from bs4 import BeautifulSoup
 import json
 from Utils.GreenHouse import extract_job_details
 
-wanted_locations = set(["San Francisco", "New York City"])
-wanted_departments = set(["Interns & Early Career", "University", "Web Development", "Product Engineering"])
+wanted_locations = set(["San Francisco", "New York, NY"])
+wanted_departments = set(["University Grads", "Engineering University Grads", "Engineering Interns", "Engineering", "Infrastructure", "Internal Engineering", "Presence", "Product Platform"])
 
-def Asana(company_uuid, company_name, company_website_scrape, query, utils, kafka):
+def SquareSpace(company_uuid, company_name, company_website_scrape, query, utils, kafka):
     page = requests.get(company_website_scrape)
     json_page = page.json()
     _reduce = json_page["departments"]
 
     active_jobs = query.get_active_remembered_jobs(company_uuid)
     check_job_list = utils.convert_active_jobs_to_dict(active_jobs)
+
     for item in _reduce:
         if item["name"] in wanted_departments:
             for job in item["jobs"]:

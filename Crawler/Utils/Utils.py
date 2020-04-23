@@ -2,7 +2,7 @@ class Utils:
     def __init__(self):
         # Levels
         self.Manager = ["manager", "lead", "ceo", "chief", "officer"]
-        self.Senior = ["principal", "senior", "sr."]
+        self.Senior = ["principal", "senior", "sr.", "staff"]
         self.Mid = ["mid", "engineerii", "engineeriii", "engineer2", "engineer3"]
         self.Entry = ["entry", "junior", "new", "grad", "associate", "engineeri", "engineer1"]
         self.Intern = ["intern", "internship"]
