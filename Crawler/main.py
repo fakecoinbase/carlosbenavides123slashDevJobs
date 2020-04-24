@@ -18,7 +18,8 @@ from Scrape.Asana import Asana
 from Scrape.Coinbase import Coinbase
 from Scrape.SquareSpace import SquareSpace
 from Scrape.AppLovin import AppLovin
-from Scrape.Lever import Lever
+from Scrape.Lever import lever
+from Scrape.GreenHouse import greenhouse
 
 def addHoney(cursor):
     UUID = "50b3dae9-0bec-456f-af6d-61a8fabe0935"
@@ -36,6 +37,7 @@ def main():
             cursor = connection.cursor()
         # drop_all_tables(cursor)
         # run_migrations(cursor)
+        # return
         # addHoney(cursor)
 
         query = Query(cursor)
@@ -45,21 +47,13 @@ def main():
 
         companies = query.get_all_companies()
 
-        for company_uuid, company_name, company_scrape_website in companies:
-            if company_name == "Honey":
-                Honey(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif company_name == "Twilio":
-                Twilio(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif company_name == "Asana":
-                Asana(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif company_name == "Coinbase":
-                Coinbase(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif company_name == "SquareSpace":
-                SquareSpace(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif company_name == "AppLovin":
-                AppLovin(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+        for company_uuid, company_name, company_scrape_website, gh, lvr, oth in companies:
+            if gh:
+                greenhouse(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+            elif lvr:
+                lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
             else:
-                Lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+                print("oops?")
 
 
     except Error as e:

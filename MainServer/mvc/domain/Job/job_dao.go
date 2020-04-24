@@ -3,6 +3,7 @@ package job
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/dbconf"
 	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/utils"
@@ -74,12 +75,20 @@ func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
 
 	db2 := dbconf.DbConnToScrappy()
 	defer db2.Close()
-	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO companies(company_uuid, company_name, company_scrape_website)
-										VALUES(?, ?, ?)`)
+	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO companies(company_uuid, company_name, company_scrape_website, greenhouse, lever, other)
+										VALUES(?, ?, ?, ?, ?, ?)`)
 	if dbPrepareErr2 != nil {
 		panic(error(dbPrepareErr2))
 	}
-	res2.Exec(uuid.String(), newCompany.CompanyName, newCompany.CompanyWebsite)
+	var greenhouse, lever, other bool
+	if strings.Contains(newCompany.CompanyWebsite, "greenhouse") {
+		greenhouse = true
+	} else if strings.Contains(newCompany.CompanyWebsite, "lever") {
+		lever = true
+	} else {
+		other = true
+	}
+	res2.Exec(uuid.String(), newCompany.CompanyName, newCompany.CompanyWebsite, greenhouse, lever, other)
 	return newCompany, nil
 }
 

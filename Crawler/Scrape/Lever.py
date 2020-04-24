@@ -8,7 +8,7 @@ import time
 wanted_locations = set(["San Francisco", "New York City", "Venice, CA", "Bellevue, WA", "Denver, CO", "Los Angeles, CA"])
 from protos.create_job import create_job
 
-def Lever(company_uuid, company_name, company_website_scrape, query, utils, kafka):
+def lever(company_uuid, company_name, company_website_scrape, query, utils, kafka):
     page = requests.get(company_website_scrape)
     soup = BeautifulSoup(page.text, 'html')
     res = soup.find_all("div", class_="posting")
