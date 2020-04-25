@@ -10,7 +10,7 @@ def extract_job_details(job, company_uuid, company_website_scrape, company_name,
     today = date.today()
     delta = (today - company_listing_date).days
     # if the job has been posted for over 30 days, move onto to the next job...
-    if delta > 30:
+    if delta > 45:
         return
     job_uuid = company_uuid + "_%_" + job["title"].replace(" ", "%" ) + "_%_" +  job["location"]["name"].replace(" ", "%")
     is_active = query.check_active_job(job_uuid, company_uuid)

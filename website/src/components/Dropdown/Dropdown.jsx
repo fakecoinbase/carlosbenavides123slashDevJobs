@@ -41,7 +41,7 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     }
   }
 
-  let location = [{ value: "Los Angeles", label: "Los Angeles"}, { value:"San Francisco", label:"San Francisco"}];
+  let location = [{ value: "Los Angeles", label: "Los Angeles"}, { value: "Venice", label: "Venice"}, { value:"San Francisco", label:"San Francisco"}, { value:"New York", label:"New York"}, { value:"Denver", label:"Denver"}, { value:"Seattle", label:"Seattle"}, { value:"Bellevue", label:"Bellevue" }, { value:"Boulder", label:"Boulder" }];
   let experience = [
     { value: "Intern", label: "Intern" },
     { value: "Entry", label: "Entry" },
@@ -49,7 +49,7 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     { value: "Senior", label: "Senior" },
     { value: "Manager", label: "Manager" },
   ];
-console.log(isDeviceMobile, "is mobile?")
+
   return (
     <div className={isDeviceMobile ? "" : "navDropdown"}>
       <Select

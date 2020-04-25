@@ -8,7 +8,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function(payload) {
-  console.log(payload)
+  console.log("log background message payload:", payload)
   const promiseChain = clients
     .matchAll({
       type: "window",
@@ -28,7 +28,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
 
 function receivePushNotification(event) {
   console.log("[SW] Push Received");
-  console.log(event.data.json(), "1323");
+  console.log("push message event:", event.data.json(), "1323");
   const obj = event.data.json()
   const title = obj["data"]["title"]
   const url = obj["data"]["url"]

@@ -4,7 +4,7 @@ import json
 from Utils.GreenHouse import extract_job_details
 
 wanted_locations = set(["San Francisco", "New York, NY", "Redwood City", "Remote", "New York City", "Palo Alto, CA", "Los Angeles, CA", "Boulder, CO", "Mountain View", "Irvine", "Denver", "Los Angeles", "Downtown Los Angeles", "Boulder, Colorado", "San Francisco", "New York, NY", "San Francisco", "Redwood City", "New York City", "Mountain View", "Irvine", "Denver", "Denver, CO", "Remote", "San Francisco, CA"])
-wanted_departments = set(["Engineering", "Engineering - Backend", "Internships & University Grad Positions", "Engineering - Data", "Engineering - Infrastructure", "Interns & Early Career", "University", "Web Development", "Product Engineering",  "Internships", "Browser Extension", "Core", "Discovery", "Frontends","Students", "University Grads", "Engineering University Grads", "Engineering Interns", "Engineering", "Infrastructure", "Internal Engineering", "Presence", "Product Platform", "Engineering", "Students"])
+wanted_departments = set(["Enterprise Applications", "Engineering - Frontend", "Shopping Features", "Engineering", "Engineering - Backend", "Internships & University Grad Positions", "Engineering - Data", "Engineering - Infrastructure", "Interns & Early Career", "University", "Web Development", "Product Engineering",  "Internships", "Browser Extension", "Core", "Discovery", "Frontends","Students", "University Grads", "Engineering University Grads", "Engineering Interns", "Engineering", "Infrastructure", "Internal Engineering", "Presence", "Product Platform", "Engineering", "Students", "Engineering - Backend"])
 
 # todo
 def greenhouse(company_uuid, company_name, company_website_scrape, query, utils, kafka):

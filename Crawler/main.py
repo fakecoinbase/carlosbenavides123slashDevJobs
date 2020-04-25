@@ -12,22 +12,8 @@ from Utils.Utils import Utils
 
 from kafka_utils.setup_kafka import KafkaMsg
 
-from Scrape.Honey import Honey
-from Scrape.Twilio import Twilio
-from Scrape.Asana import Asana
-from Scrape.Coinbase import Coinbase
-from Scrape.SquareSpace import SquareSpace
-from Scrape.AppLovin import AppLovin
 from Scrape.Lever import lever
 from Scrape.GreenHouse import greenhouse
-
-def addHoney(cursor):
-    UUID = "50b3dae9-0bec-456f-af6d-61a8fabe0935"
-    Name = "Honey"
-    Website = "https://api.greenhouse.io/v1/boards/honey/departments"
-    SQL = "INSERT INTO Companies (UUID, Name, Website) VALUES (%s, %s, %s)"
-    cursor.execute(SQL, (UUID, Name, Website))
-
 
 def main():
     try:
@@ -54,8 +40,6 @@ def main():
                 lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
             else:
                 print("oops?")
-
-
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:
