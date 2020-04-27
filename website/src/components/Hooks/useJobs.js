@@ -8,9 +8,12 @@ export function useJobs() {
 
   const [location, setLocation] = useState("");
   const [experience, setExperience] = useState("");
+
   const [company, setCompany] = useState("");
 
   const [companyDropdown, setCompanyDropdown] = useState([]);
+  const [homePageCompanyDropdown, sethomePageCompanyDropdown] = useState([])
+
   const [companyUUID, setCompanyUUID] = useState(new Map());
 
   const [homePage, setHomePage] = useState([]);
@@ -39,9 +42,35 @@ export function useJobs() {
           myMap.set(obj["company_name"], obj["company_uuid"]);
         }
         setCompanyDropdown(temp);
+        sethomePageCompanyDropdown(temp)
         setCompanyUUID(myMap);
       });
   }, []);
+
+  useEffect(() => {
+    if(location !== "") {
+      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/location/${location}`)
+      .then( res => {
+        var json = res.data
+        json = json.sort(function(a, b) {
+          if (a.company_name < b.company_name) {
+            return -1;
+          }
+          if (a.company_name > b.company_name) {
+            return 1;
+          }
+          return 0;
+        });
+        let temp = []
+        for (var obj of json) {
+          temp.push({ value: obj["company_name"], label: obj["company_name"] });
+        }
+        setCompanyDropdown(temp)
+      })
+    } else {
+      setCompanyDropdown(homePageCompanyDropdown)
+    }
+  }, [location])
 
   useEffect(() => {
     setLoading(true);

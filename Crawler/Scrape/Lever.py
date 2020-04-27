@@ -8,6 +8,8 @@ import time
 wanted_locations = set(["San Francisco", "New York City", "Venice, CA", "Bellevue, WA", "Denver, CO", "Los Angeles, CA"])
 from protos.create_job import create_job
 
+from Utils.LocationUtils import location_builder
+
 def lever(company_uuid, company_name, company_website_scrape, query, utils, kafka):
     page = requests.get(company_website_scrape)
     soup = BeautifulSoup(page.text, 'html')
@@ -36,6 +38,7 @@ def lever(company_uuid, company_name, company_website_scrape, query, utils, kafk
                 job_uuid = company_uuid + "_%_" + title.replace(" ", "%" ) + "_%_" +  job_location.replace(" ", "%")
                 is_active = query.check_active_job(job_uuid, company_uuid)
                 if len(is_active) == 0:
+                    location_builder(company_name, job_location, query, kafka)
                     active = 1
                     experience_level = utils.determine_experience_level(title) 
                     data = [job_uuid, company_uuid, job_link, company_website_scrape, "", company_name, experience_level, active, 0, job_location]

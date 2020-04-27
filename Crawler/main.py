@@ -24,7 +24,6 @@ def main():
         # drop_all_tables(cursor)
         # run_migrations(cursor)
         # return
-        # addHoney(cursor)
 
         query = Query(cursor)
         utils = Utils()

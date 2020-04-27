@@ -6,7 +6,7 @@ sudo docker run --net=host --rm confluentinc/cp-kafka:5.0.0 kafka-topics --creat
 CREATE DATABASE devjobs;
 
 
-drop tables companies, jobs, jobs_pivot, levels;
+drop tables companies, jobs, jobs_pivot, levels, locations;
 
 CREATE TABLE jobs_pivot(
     job_uuid varchar(255),
@@ -15,6 +15,11 @@ CREATE TABLE jobs_pivot(
     index(company_uuid)
     # FOREIGN KEY(company_uuid) REFERENCES companies(company_uuid), 
     # FOREIGN KEY(jobs_uuid) REFERENCES jobs(jobs_uuid)
+);
+
+CREATE TABLE locations(
+    location varchar(255),
+    company_name varchar(255)
 );
 
 CREATE TABLE jobs (

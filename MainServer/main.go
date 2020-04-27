@@ -35,7 +35,9 @@ func main() {
 	r.HandleFunc("/rest/api/v1/jobs/company/search/{companyUUID:[A-Za-z0-9_@./#&+-]*$}", controllers.GetJobsByCompany).Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/company/list/", controllers.GetCompanyList).Methods("GET")
 
-	c.SubscribeTopics([]string{"new_job", "del_job"}, nil)
+	r.HandleFunc("/rest/api/v1/jobs/company/location/{location:[A-Za-z ]*$}", controllers.GetCompaniesByLocation).Methods("GET")
+
+	c.SubscribeTopics([]string{"new_job", "del_job", "job_location"}, nil)
 	go http.ListenAndServe(":8080", r)
 
 	for {
@@ -44,11 +46,15 @@ func main() {
 		if err == nil {
 			s := strings.Split(msg.TopicPartition.String(), "[")
 			topic, _ := s[0], s[1]
-
+			fmt.Println(topic)
 			switch topic {
 			case "new_job":
-				fmt.Println("lmao")
+				fmt.Println("new job")
 				consumergroups.Addnewjob(msg)
+				break
+			case "job_location":
+				fmt.Println("new job location")
+				consumergroups.AddNewJobLocation(msg)
 				break
 			default:
 				break

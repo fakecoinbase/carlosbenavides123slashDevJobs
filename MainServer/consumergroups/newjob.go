@@ -18,6 +18,7 @@ func Addnewjob(msg *kafka.Message) {
 		log.Fatalln("Failed to parse Job:", err)
 	}
 	db := dbconf.DbConn()
+	defer db.Close()
 
 	insForm1, err := db.Prepare(`INSERT INTO 
 				jobs_pivot(job_uuid, company_uuid)
@@ -39,6 +40,5 @@ func Addnewjob(msg *kafka.Message) {
 	jobLocation := strings.ReplaceAll(splitString[2], "%", " ")
 
 	insForm2.Exec(job.JobUUID, job.CompanyUUID, jobTitle, job.JobLink, jobLocation, job.JobPosted, msg.Timestamp.Unix(), job.Active, job.ExperienceLevel)
-	defer db.Close()
 
 }

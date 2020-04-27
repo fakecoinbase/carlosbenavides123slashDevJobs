@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "locationpb";
+
+message Location {
+    string Location = 1;
+    string CompanyName = 2;
+}

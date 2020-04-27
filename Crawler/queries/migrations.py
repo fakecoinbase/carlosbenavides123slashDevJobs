@@ -26,6 +26,10 @@ def run_migrations(cursor):
                     active TINYINT(1), PRIMARY KEY(job_id), \
                     FOREIGN KEY(company_uuid) REFERENCES companies(company_uuid) \
                     )")
+    cursor.execute("CREATE TABLE IF NOT EXISTS locations \
+                    ( location VARCHAR(255) NOT NULL, \
+                    company_name VARCHAR(255) NOT NULL \
+                    )")
 
     # TODO
     # cursor.execute("CREATE TABLE IF NOT EXISTS company_scrape_details \

@@ -41,3 +41,13 @@ class Query(object):
         self.cursor.execute(SQL_SOFT_DELETE_JOB, (0, job_id, provided_id,))
         SQL_SOFT_DELETE_JOB = "UPDATE remembered_jobs SET active = %s WHERE job_id = %s AND provided_id = %s"
         self.cursor.execute(SQL_SOFT_DELETE_JOB, (0, job_id, provided_id,))
+
+    def check_location_company(self, location, company_name):
+        location_sql = "SELECT location FROM locations WHERE location=%s AND company_name=%s"
+        self.cursor.execute(location_sql, (location, company_name))
+        results = self.cursor.fetchall()
+        return len(results) == 0
+
+    def insert_new_location(self, location, company_name):
+        location_sql = "INSERT INTO locations (location, company_name) VALUES (%s, %s)"
+        self.cursor.execute(location_sql, (location, company_name))
