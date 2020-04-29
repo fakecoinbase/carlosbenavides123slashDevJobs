@@ -47,3 +47,43 @@ func GetCompaniesByLocation(location string) ([]*Location, *utils.ApplicationErr
 	}
 	return locations, nil
 }
+
+func GetLocationsByCompany(comp string) ([]*Location, *utils.ApplicationError) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, err := db.Prepare(`select l.location, l.company_name 
+						from locations l
+						WHERE l.company_name=?`)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	res, queryErr := stmt.Query(comp)
+
+	if queryErr != nil {
+		panic(error(queryErr))
+	}
+
+	locations := []*Location{}
+	for res.Next() {
+		var LocationName, CompanyName string
+		scanErr := res.Scan(&LocationName, &CompanyName)
+
+		if scanErr != nil {
+			panic(scanErr.Error())
+		}
+		location := &Location{}
+		location.Location = LocationName
+		location.CompanyName = CompanyName
+		locations = append(locations, location)
+	}
+	if len(locations) == 0 {
+		return nil, &utils.ApplicationError{
+			Message:    fmt.Sprintf("Companies were not found"),
+			StatusCode: http.StatusNotFound,
+			Code:       "not found",
+		}
+	}
+	return locations, nil
+}

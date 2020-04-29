@@ -7,10 +7,12 @@ export function useJobs() {
   const [nonFilteredJobs, setNonFilteredJobs] = useState([]);
 
   const [location, setLocation] = useState("");
+  const [locationDropDown, setLocationDropDown] = useState([])
+  const [homePageLocationDropDown, sethomePageLocationDropDown] = useState([])
+
   const [experience, setExperience] = useState("");
 
   const [company, setCompany] = useState("");
-
   const [companyDropdown, setCompanyDropdown] = useState([]);
   const [homePageCompanyDropdown, sethomePageCompanyDropdown] = useState([])
 
@@ -44,8 +46,35 @@ export function useJobs() {
         setCompanyDropdown(temp);
         sethomePageCompanyDropdown(temp)
         setCompanyUUID(myMap);
+        setLocationDropDown([{ value: "Los Angeles", label: "Los Angeles"}, { value: "Venice", label: "Venice"}, { value:"San Francisco", label:"San Francisco"}, { value:"New York", label:"New York"}, { value:"Denver", label:"Denver"}, { value:"Seattle", label:"Seattle"}, { value:"Bellevue", label:"Bellevue" }, { value:"Boulder", label:"Boulder" }])
+        sethomePageLocationDropDown([{ value: "Los Angeles", label: "Los Angeles"}, { value: "Venice", label: "Venice"}, { value:"San Francisco", label:"San Francisco"}, { value:"New York", label:"New York"}, { value:"Denver", label:"Denver"}, { value:"Seattle", label:"Seattle"}, { value:"Bellevue", label:"Bellevue" }, { value:"Boulder", label:"Boulder" }])
       });
   }, []);
+
+  useEffect(() => {
+    if(company !== "") {
+      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/company/${company}`)
+      .then( res => {
+        var json = res.data
+        json = json.sort(function(a, b) {
+          if (a.location < b.location) {
+            return -1;
+          }
+          if (a.location > b.location) {
+            return 1;
+          }
+          return 0;
+        });
+        let temp = []
+        for (var obj of json) {
+          temp.push({ value: obj["location"], label: obj["location"] });
+        }
+        setLocationDropDown(temp)
+      })
+    } else {
+      setLocationDropDown(homePageLocationDropDown)
+    }
+  }, [company])
 
   useEffect(() => {
     if(location !== "") {
@@ -183,6 +212,7 @@ export function useJobs() {
     companyDropdown,
     setCompanyDropdown,
     loading,
-    setLoading
+    setLoading,
+    locationDropDown
   };
 }

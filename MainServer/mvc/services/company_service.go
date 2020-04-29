@@ -21,3 +21,16 @@ func GetCompaniesByLocation(r *http.Request) ([]*location.Location, *utils.Appli
 	}
 	return location.GetCompaniesByLocation(loc)
 }
+
+func GetLocationsByCompany(r *http.Request) ([]*location.Location, *utils.ApplicationError) {
+	params := mux.Vars(r)
+	comp := params["company"]
+	if comp == "" {
+		return nil, &utils.ApplicationError{
+			Message:    fmt.Sprintf("Company name is required!"),
+			StatusCode: http.StatusNotFound,
+			Code:       "No Jobs available.",
+		}
+	}
+	return location.GetLocationsByCompany(comp)
+}

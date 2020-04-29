@@ -6,7 +6,7 @@ import "./Dropdown.scss";
 import "react-dropdown/style.css";
 import Select from "react-select";
 
-function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }) {
+function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown, locationDropDown }) {
 
   const [isDeviceMobile, setIsDeviceMobile] = useState(false)
   
@@ -41,7 +41,6 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     }
   }
 
-  let location = [{ value: "Los Angeles", label: "Los Angeles"}, { value: "Venice", label: "Venice"}, { value:"San Francisco", label:"San Francisco"}, { value:"New York", label:"New York"}, { value:"Denver", label:"Denver"}, { value:"Seattle", label:"Seattle"}, { value:"Bellevue", label:"Bellevue" }, { value:"Boulder", label:"Boulder" }];
   let experience = [
     { value: "Intern", label: "Intern" },
     { value: "Entry", label: "Entry" },
@@ -54,7 +53,7 @@ function NavDropdown({ setCompany, setLocation, setExperience, companyDropdown }
     <div className={isDeviceMobile ? "" : "navDropdown"}>
       <Select
         name="colors"
-        options={location}
+        options={locationDropDown}
         className={isDeviceMobile ? "" : "navDropdownRegular"}
         classNamePrefix="select"
         placeholder="Location"

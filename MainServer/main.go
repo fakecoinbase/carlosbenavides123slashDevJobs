@@ -36,6 +36,7 @@ func main() {
 	r.HandleFunc("/rest/api/v1/jobs/company/list/", controllers.GetCompanyList).Methods("GET")
 
 	r.HandleFunc("/rest/api/v1/jobs/company/location/{location:[A-Za-z ]*$}", controllers.GetCompaniesByLocation).Methods("GET")
+	r.HandleFunc("/rest/api/v1/jobs/company/company/{company:[A-Za-z0-9 ]*$}", controllers.GetLocationsByCompany).Methods("GET")
 
 	c.SubscribeTopics([]string{"new_job", "del_job", "job_location"}, nil)
 	go http.ListenAndServe(":8080", r)
