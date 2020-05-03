@@ -14,6 +14,7 @@ from kafka_utils.setup_kafka import KafkaMsg
 
 from Scrape.Lever import lever
 from Scrape.GreenHouse import greenhouse
+import time
 
 def main():
     try:
@@ -33,6 +34,7 @@ def main():
         companies = query.get_all_companies()
 
         for company_uuid, company_name, company_scrape_website, gh, lvr, oth in companies:
+            time.sleep(0.2)
             if gh:
                 greenhouse(company_uuid, company_name, company_scrape_website, query, utils, kafka)
             elif lvr:

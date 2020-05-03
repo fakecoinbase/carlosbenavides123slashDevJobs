@@ -10,8 +10,24 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetJobs() ([]*job.Job, *utils.ApplicationError) {
-	return job.GetJobs()
+func GetJobs(r *http.Request) (*job.JobResponse, *utils.ApplicationError) {
+	jobIdx := r.URL.Query().Get("timestamp")
+	// params := mux.Vars(r)
+	// timestamp := params["timestamp"]
+	if jobIdx == "" {
+		jobIdx = "2147000"
+	}
+
+	fmt.Println(jobIdx)
+
+	// if timestamp == "" {
+	// 	return nil, &utils.ApplicationError{
+	// 		Message:    fmt.Sprintf("timestamp parameter required!"),
+	// 		StatusCode: http.StatusNotFound,
+	// 		Code:       "No Jobs available.",
+	// 	}
+	// }
+	return job.GetJobs(jobIdx)
 }
 
 func CreateJob(r *http.Request) (*job.NewCompany, *utils.ApplicationError) {
@@ -44,4 +60,20 @@ func GetJobsByCompany(r *http.Request) ([]*job.Job, *utils.ApplicationError) {
 
 func GetCompanyList() ([]*job.Company, *utils.ApplicationError) {
 	return job.GetCompanyList()
+}
+
+func GetJobsByLocation(r *http.Request) (*job.JobResponse, *utils.ApplicationError) {
+	jobIdx := r.URL.Query().Get("cursor")
+	loc := r.URL.Query().Get("location")
+	if loc == "" {
+		return nil, &utils.ApplicationError{
+			Message:    fmt.Sprintf("Location is required!"),
+			StatusCode: http.StatusBadRequest,
+			Code:       "Location Missing.",
+		}
+	}
+	if jobIdx == "" {
+		jobIdx = "2147000"
+	}
+	return job.GetJobsByLocation(loc, jobIdx)
 }

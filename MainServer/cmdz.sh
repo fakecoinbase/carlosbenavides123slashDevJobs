@@ -6,7 +6,7 @@ sudo docker run --net=host --rm confluentinc/cp-kafka:5.0.0 kafka-topics --creat
 CREATE DATABASE devjobs;
 
 
-drop tables companies, jobs, jobs_pivot, levels, locations;
+drop tables companies, jobs, jobs_pivot, levels, locations, entry_jobs, intern_jobs, mid_jobs, senior_jobs;
 
 CREATE TABLE jobs_pivot(
     job_uuid varchar(255),
@@ -35,13 +35,70 @@ CREATE TABLE jobs (
     job_idx int AUTO_INCREMENT,
     PRIMARY KEY (job_uuid),
     index(job_idx),
-    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid) 
+    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid)
+);
+
+CREATE TABLE entry_jobs (
+    job_uuid varchar(255),
+    company_uuid varchar(255),
+    job_title varchar(255),
+    job_link varchar(255),
+    job_location varchar(255),
+    job_posted varchar(255),
+    active TINYINT(1),
+    job_idx int AUTO_INCREMENT,
+    PRIMARY KEY (job_uuid),
+    index(job_idx),
+    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid)
+);
+
+CREATE TABLE intern_jobs (
+    job_uuid varchar(255),
+    company_uuid varchar(255),
+    job_title varchar(255),
+    job_link varchar(255),
+    job_location varchar(255),
+    job_posted varchar(255),
+    active TINYINT(1),
+    job_idx int AUTO_INCREMENT,
+    PRIMARY KEY (job_uuid),
+    index(job_idx),
+    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid)
+);
+
+CREATE TABLE mid_jobs (
+    job_uuid varchar(255),
+    company_uuid varchar(255),
+    job_title varchar(255),
+    job_link varchar(255),
+    job_location varchar(255),
+    job_posted varchar(255),
+    active TINYINT(1),
+    job_idx int AUTO_INCREMENT,
+    PRIMARY KEY (job_uuid),
+    index(job_idx),
+    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid)
+);
+
+CREATE TABLE senior_jobs (
+    job_uuid varchar(255),
+    company_uuid varchar(255),
+    job_title varchar(255),
+    job_link varchar(255),
+    job_location varchar(255),
+    job_posted varchar(255),
+    active TINYINT(1),
+    job_idx int AUTO_INCREMENT,
+    PRIMARY KEY (job_uuid),
+    index(job_idx),
+    FOREIGN KEY(company_uuid) REFERENCES jobs_pivot(company_uuid)
 );
 
 CREATE TABLE companies (
     company_uuid varchar(255) NOT NULL,
     company_name varchar(255) NOT NULL,
     company_cloudinary varchar(255) NOT NULL,
+    index(company_name),
     PRIMARY KEY(company_uuid)
 );
 
@@ -59,6 +116,29 @@ INSERT INTO levels(job_level) VALUES ("Manager");
 
 # INSERT INTO companies(company_uuid, name, cloudinary) 
 # VALUES ("50b3dae9-0bec-456f-af6d-61a8fabe0935", "Honey", "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png");
+
+
+
+# reorder db
+# alter table jobs order by job_posted ASC;
+
+# reset a auto increment id
+# set @autoid := 0;
+# update jobs set job_idx = @autoid := (@autoid+1);
+# alter table jobs auto_increment=1;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 select j.job_uuid
 from jobs j

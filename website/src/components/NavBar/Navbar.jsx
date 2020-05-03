@@ -50,7 +50,7 @@ function Navbar({ joblist, sw }) {
           <Route path="/">
             <NavDropdown {...joblist}/>
             <hr className="solid" />
-            <Home joblist={joblist.jobs} loading={joblist.loading} />
+            <Home {...joblist} />
           </Route>
         </Switch>
       </Router>

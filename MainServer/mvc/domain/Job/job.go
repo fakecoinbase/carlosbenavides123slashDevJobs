@@ -7,10 +7,19 @@ type Job struct {
 	JobLocation string `json:"job_location"`
 	JobPosted   int64  `json:"job_posted"`
 	JobFound    int64  `json:"job_found"`
-	JobIdx      int64  `json:"cursor_idx"`
+	JobIdx      int64  `json:"job_idx"`
 	CompanyName string `json:"company_name"`
 	Cloudinary  string `json:"cloudinary"`
 	JobLevel    string `json:"level"`
+}
+
+type Cursor struct {
+	Cursor int64 `json:"next_cursor"`
+}
+
+type JobResponse struct {
+	Job    []*Job
+	Cursor *Cursor
 }
 
 type NewCompany struct {

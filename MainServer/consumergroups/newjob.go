@@ -39,6 +39,75 @@ func Addnewjob(msg *kafka.Message) {
 	jobTitle := strings.ReplaceAll(splitString[1], "%", " ")
 	jobLocation := strings.ReplaceAll(splitString[2], "%", " ")
 
+	if job.JobPosted == 0 {
+		job.JobPosted = msg.Timestamp.Unix()
+	}
+
 	insForm2.Exec(job.JobUUID, job.CompanyUUID, jobTitle, job.JobLink, jobLocation, job.JobPosted, msg.Timestamp.Unix(), job.Active, job.ExperienceLevel)
 
+	if job.ExperienceLevel == 1 {
+		replicateInternJobData(job, jobTitle, jobLocation)
+	} else if job.ExperienceLevel == 2 {
+		replicateEntryJobData(job, jobTitle, jobLocation)
+	} else if job.ExperienceLevel == 3 {
+		replicateMidJobs(job, jobTitle, jobLocation)
+	} else if job.ExperienceLevel == 4 {
+		replicateSeniorJobs(job, jobTitle, jobLocation)
+	}
+}
+
+func replicateInternJobData(job *jobpb.Job, jobtitle string, jobLocation string) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, prepareErr := db.Prepare(`INSERT INTO intern_jobs(job_uuid, company_uuid, job_title,
+									job_link, job_location, job_posted,
+									active) VALUES
+									(?, ?, ?, ?, ?, ?, ?)`)
+	if prepareErr != nil {
+		panic(prepareErr.Error())
+	}
+	stmt.Exec(job.JobUUID, job.CompanyUUID, jobtitle, job.JobLink, jobLocation, job.JobPosted, job.Active)
+}
+
+func replicateEntryJobData(job *jobpb.Job, jobtitle string, jobLocation string) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, prepareErr := db.Prepare(`INSERT INTO entry_jobs(job_uuid, company_uuid, job_title,
+									job_link, job_location, job_posted,
+									active) VALUES
+									(?, ?, ?, ?, ?, ?, ?)`)
+	if prepareErr != nil {
+		panic(prepareErr.Error())
+	}
+	stmt.Exec(job.JobUUID, job.CompanyUUID, jobtitle, job.JobLink, jobLocation, job.JobPosted, job.Active)
+}
+
+func replicateMidJobs(job *jobpb.Job, jobtitle string, jobLocation string) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, prepareErr := db.Prepare(`INSERT INTO mid_jobs(job_uuid, company_uuid, job_title,
+									job_link, job_location, job_posted,
+									active) VALUES
+									(?, ?, ?, ?, ?, ?, ?)`)
+	if prepareErr != nil {
+		panic(prepareErr.Error())
+	}
+	stmt.Exec(job.JobUUID, job.CompanyUUID, jobtitle, job.JobLink, jobLocation, job.JobPosted, job.Active)
+}
+
+func replicateSeniorJobs(job *jobpb.Job, jobtitle string, jobLocation string) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, prepareErr := db.Prepare(`INSERT INTO senior_jobs(job_uuid, company_uuid, job_title,
+									job_link, job_location, job_posted,
+									active) VALUES
+									(?, ?, ?, ?, ?, ?, ?)`)
+	if prepareErr != nil {
+		panic(prepareErr.Error())
+	}
+	stmt.Exec(job.JobUUID, job.CompanyUUID, jobtitle, job.JobLink, jobLocation, job.JobPosted, job.Active)
 }

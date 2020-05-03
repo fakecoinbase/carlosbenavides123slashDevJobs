@@ -29,7 +29,10 @@ func main() {
 	// websocket for future
 
 	// rest apis
-	r.HandleFunc("/rest/api/v1/jobs/", controllers.GetJobs).Methods("GET")
+	r.HandleFunc("/rest/api/v1/jobs/index", controllers.GetJobs).Queries("timestamp", "{[0-9]+}").Methods("GET")
+	r.HandleFunc("/rest/api/v1/jobs/search/location", controllers.GetJobsByLocation).Queries("cursor", "{cursor:[0-9]*$}", "location", "{location:[a-zA-Z ]*$}").Methods("GET")
+	// r.HandleFunc("/rest/api/v1/jobs/index", controllers.GetJobs).Queries("cursor", "{[0-9]+}").Methods("GET")
+
 	r.HandleFunc("/rest/api/v1/jobs/", controllers.CreateJob).Methods("POST")
 
 	r.HandleFunc("/rest/api/v1/jobs/company/search/{companyUUID:[A-Za-z0-9_@./#&+-]*$}", controllers.GetJobsByCompany).Methods("GET")

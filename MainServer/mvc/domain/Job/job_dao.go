@@ -10,47 +10,76 @@ import (
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-func GetJobs() ([]*Job, *utils.ApplicationError) {
+func GetJobs(jobIdx string) (*JobResponse, *utils.ApplicationError) {
+
+	fmt.Println(jobIdx, "GET JOBS TIMESTAMP")
+
+	var index = 0
 
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	res, err := db.Query(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, j.job_found, j.job_idx, c.company_name, c.company_cloudinary, l.job_level
-	from companies c
-	inner join jobs_pivot jp on jp.company_uuid = c.company_uuid
-	inner join jobs j on jp.job_uuid = j.job_uuid
-	inner join levels l on j.experience_level = l.id
-	ORDER BY j.job_posted DESC`)
-	if err != nil {
-		panic(err.Error())
+	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, 
+						j.job_idx, c.company_name, c.company_cloudinary, l.job_level
+						from companies c 
+						inner join jobs_pivot jp on jp.company_uuid = c.company_uuid 
+						inner join jobs j on jp.job_uuid = j.job_uuid 
+						inner join levels l on j.experience_level = l.id
+						WHERE j.job_idx <= ? AND active = 1
+						ORDER BY j.job_idx DESC
+						LIMIT 21`)
+
+	if dbPrepareErr != nil {
+		panic(dbPrepareErr.Error())
 	}
+
+	res, dbErr := stmt.Query(jobIdx)
+
+	if dbErr != nil {
+		panic(dbErr.Error())
+	}
+
 	job := []*Job{}
+
+	cursor := &Cursor{}
+	jobResponse := &JobResponse{}
 
 	for res.Next() {
 		var JobUUID, JobTitle, JobLink, JobLocation string
-		var JobPosted, JobFound, JobIdx int64
+		var JobPosted, JobIdx int64
 		var CompanyName, Cloudinary, JobLevel string
 
-		err = res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
-		if err != nil {
-			panic(err.Error())
+		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
+		if scanErr != nil {
+			panic(scanErr.Error())
 		}
-		jobRow := &Job{}
-		jobRow.JobUUID = JobUUID
-		jobRow.JobTitle = JobTitle
-		jobRow.JobLink = JobLink
-		jobRow.JobLocation = JobLocation
-		jobRow.JobPosted = JobPosted
-		jobRow.JobFound = JobFound
-		jobRow.JobIdx = JobIdx
-		jobRow.CompanyName = CompanyName
-		jobRow.Cloudinary = Cloudinary
-		jobRow.JobLevel = JobLevel
 
-		job = append(job, jobRow)
+		fmt.Println(JobIdx, index)
+
+		if index == 20 {
+			cursor.Cursor = JobIdx
+			break
+		} else {
+			jobRow := &Job{}
+			jobRow.JobUUID = JobUUID
+			jobRow.JobTitle = JobTitle
+			jobRow.JobLink = JobLink
+			jobRow.JobLocation = JobLocation
+			jobRow.JobPosted = JobPosted
+			jobRow.JobIdx = JobIdx
+			jobRow.CompanyName = CompanyName
+			jobRow.Cloudinary = Cloudinary
+			jobRow.JobLevel = JobLevel
+			job = append(job, jobRow)
+		}
+
+		index++
 	}
-	if err == nil {
-		return job, nil
+
+	if dbErr == nil {
+		jobResponse.Job = job
+		jobResponse.Cursor = cursor
+		return jobResponse, nil
 	}
 
 	return nil, &utils.ApplicationError{
@@ -96,7 +125,7 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 	db := dbconf.DbConn()
 	defer db.Close()
 
-	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, j.job_found, j.job_idx, c.company_name, c.company_cloudinary, l.job_level
+	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, j.job_found, c.company_name, c.company_cloudinary, l.job_level
 		from companies c inner join jobs_pivot jp on jp.company_uuid = c.company_uuid 
 		AND c.company_uuid=?
 		inner join jobs j on jp.job_uuid = j.job_uuid 
@@ -117,10 +146,10 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 
 	for res.Next() {
 		var JobUUID, JobTitle, JobLink, JobLocation string
-		var JobPosted, JobFound, JobIdx int64
+		var JobPosted, JobFound int64
 		var CompanyName, Cloudinary, JobLevel string
 
-		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobFound, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
+		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobFound, &CompanyName, &Cloudinary, &JobLevel)
 
 		if scanErr != nil {
 			panic(scanErr.Error())
@@ -133,7 +162,6 @@ func GetJobsByCompany(companyUUID string) ([]*Job, *utils.ApplicationError) {
 		jobRow.JobLocation = JobLocation
 		jobRow.JobPosted = JobPosted
 		jobRow.JobFound = JobFound
-		jobRow.JobIdx = JobIdx
 		jobRow.CompanyName = CompanyName
 		jobRow.Cloudinary = Cloudinary
 		jobRow.JobLevel = JobLevel
@@ -166,4 +194,80 @@ func GetCompanyList() ([]*Company, *utils.ApplicationError) {
 		companies = append(companies, companyRow)
 	}
 	return companies, nil
+}
+
+func GetJobsByLocation(location string, jobIdx string) (*JobResponse, *utils.ApplicationError) {
+	var index = 0
+
+	location = "%" + location + "%"
+
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, dbPrepareErr := db.Prepare(`select j.job_uuid, j.job_title, j.job_link, j.job_location, j.job_posted, 
+						j.job_idx, c.company_name, c.company_cloudinary, l.job_level
+						from companies c 
+						inner join jobs_pivot jp on jp.company_uuid = c.company_uuid 
+						inner join jobs j on jp.job_uuid = j.job_uuid 
+						inner join levels l on j.experience_level = l.id
+						WHERE j.job_location LIKE ?
+						AND j.job_idx <= ? 
+						AND active = 1
+						ORDER BY j.job_idx DESC
+						LIMIT 21`)
+	if dbPrepareErr != nil {
+		panic(dbPrepareErr.Error())
+	}
+
+	res, queryErr := stmt.Query(location, jobIdx)
+
+	if queryErr != nil {
+		panic(queryErr.Error())
+	}
+
+	job := []*Job{}
+
+	cursor := &Cursor{}
+	jobResponse := &JobResponse{}
+
+	for res.Next() {
+		var JobUUID, JobTitle, JobLink, JobLocation string
+		var JobPosted, JobIdx int64
+		var CompanyName, Cloudinary, JobLevel string
+
+		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobIdx, &CompanyName, &Cloudinary, &JobLevel)
+		if scanErr != nil {
+			panic(scanErr.Error())
+		}
+
+		fmt.Println(JobIdx, index)
+
+		if index == 20 {
+			cursor.Cursor = JobIdx
+			break
+		} else {
+			jobRow := &Job{}
+			jobRow.JobUUID = JobUUID
+			jobRow.JobTitle = JobTitle
+			jobRow.JobLink = JobLink
+			jobRow.JobLocation = JobLocation
+			jobRow.JobPosted = JobPosted
+			jobRow.JobIdx = JobIdx
+			jobRow.CompanyName = CompanyName
+			jobRow.Cloudinary = Cloudinary
+			jobRow.JobLevel = JobLevel
+			job = append(job, jobRow)
+		}
+
+		index++
+	}
+
+	if index != 20 {
+		cursor.Cursor = 0
+	}
+
+	jobResponse.Cursor = cursor
+	jobResponse.Job = job
+	return jobResponse, nil
+
 }

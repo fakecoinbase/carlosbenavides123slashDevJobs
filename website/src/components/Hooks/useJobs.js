@@ -23,6 +23,11 @@ export function useJobs() {
 
   const [loading, setLoading] = useState(false);
 
+  const [cursor, setCursor] = useState(0)
+  const [locCursor, setLocCursor] = useState("")
+
+  const [apiCalled, setApiCalled] = useState(true)
+
   useEffect(() => {
     axios
       .get("http://localhost:8080/rest/api/v1/jobs/company/list/")
@@ -102,18 +107,34 @@ export function useJobs() {
   }, [location])
 
   useEffect(() => {
-    setLoading(true);
-    axios.get("http://localhost:8080/rest/api/v1/jobs/").then(res => {
-      setJobs(res.data);
-      setHomePage(res.data);
-      setLoading(false);
-    });
+    homepageCall()
   }, []);
+
+  // useEffect(() => {
+  //   if(cursor === ""){
+  //     setScrollMore(false)
+  //   }
+  // }, [cursor])
+
+  function homepageCall() {
+    setLoading(true);
+    setApiCalled(true)
+    axios.get("http://localhost:8080/rest/api/v1/jobs/index?timestamp=").then(res => {
+      var json = res.data
+      setJobs(json["Job"]);
+      setHomePage(json["Job"]);
+      setCursor(json["Cursor"]["next_cursor"])
+      console.log(json["Cursor"]["next_cursor"], "NEXT CURSOR")
+      setLoading(false);
+      setApiCalled(false)
+    });
+  }
 
   useEffect(() => {
     if (location === "" && experience === "" && company == "") {
-      setJobs(homePage);
-      setCompanyPage([]);
+      homepageCall()
+      setCursor("")
+      setLocCursor("")
       return;
     }
     // rest api call if companyPage doesn't equal to company name
@@ -124,6 +145,9 @@ export function useJobs() {
           return;
         }
       }
+      setCursor(undefined)
+      setLocCursor(undefined)
+      setApiCalled(true)
       let uuid = companyUUID.get(company);
       setLoading(true);
       axios
@@ -132,6 +156,7 @@ export function useJobs() {
           setJobs(res.data);
           setCompanyPage(res.data);
           setLoading(false);
+          setApiCalled(false)
         });
     } else if (company !== "" && experience !== "" && location === "") {
       checkCompanyPage(company);
@@ -144,16 +169,47 @@ export function useJobs() {
       setJobs(filterByExperienceAndLocation(companyPage, experience, location));
     }
 
-    // otherwise filter as much w/o calling api
-    // assume companyPage state is empty
-    if (company === "" && experience !== "" && location === "") {
-      setJobs(filterByExperience(homePage, experience));
-    } else if (company === "" && experience === "" && location !== "") {
-      setJobs(filterByLocation(homePage, location));
-    } else if (company === "" && experience !== "" && location !== "") {
-      setJobs(filterByExperienceAndLocation(homePage, experience, location));
+    if(company === "" && location !== "" && experience === "") {
+      console.log(checkMemoryJobs(), "CHECK MEMORY JOBS", filteredJobs)
+      if(checkMemoryJobs()) {
+        apiJobsByLocation()
+      } else {
+        setJobs(filteredJobs)
+      }
+      console.log("HEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeee")
+    } else if(company === "" && location !== "" && experience !== "" && typeof(locCursor) === 'number') {
+      setFilteredJobs(jobs)
+      setJobs(filterByExperience(jobs, experience))
     }
+
   }, [company, location, experience]);
+
+  function checkMemoryJobs() {
+    if (
+      filteredJobs === undefined ||
+      filteredJobs.length === 0
+    ) {
+      return true
+    }
+    return false
+  }
+
+  function apiJobsByLocation() {
+    setLoading(true);
+    setCursor(undefined)
+    setApiCalled(true)
+    axios.get(`http://localhost:8080/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
+      var json = res.data
+      console.log(json, "JOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBS")
+      setJobs(json["Job"]);
+      setFilteredJobs(json["Job"]);
+      setLocCursor(json["Cursor"]["next_cursor"])
+      console.log(json["Cursor"]["next_cursor"], "NEXT CURSOR")
+      setLoading(false);
+      setApiCalled(false)
+    });
+  }
+  
 
   function filterByExperience(data, experience) {
     return data.filter(i => i.level === experience);
@@ -167,12 +223,14 @@ export function useJobs() {
     ) {
       let uuid = companyUUID.get(company);
       setLoading(true);
+      setApiCalled(true)
       axios
         .get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
         .then(res => {
           setJobs(res.data);
           setCompanyPage(res.data);
           setLoading(false);
+          setApiCalled(false)
         });
     }
   }
@@ -213,6 +271,13 @@ export function useJobs() {
     setCompanyDropdown,
     loading,
     setLoading,
-    locationDropDown
+    locationDropDown,
+    setHomePage,
+    cursor,
+    setCursor,
+    locCursor,
+    setLocCursor,
+    setApiCalled,
+    apiCalled
   };
 }
