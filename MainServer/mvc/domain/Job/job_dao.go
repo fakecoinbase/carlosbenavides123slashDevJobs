@@ -1,6 +1,7 @@
 package job
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
@@ -270,4 +271,135 @@ func GetJobsByLocation(location string, jobIdx string) (*JobResponse, *utils.App
 	jobResponse.Job = job
 	return jobResponse, nil
 
+}
+
+func GetJobsByExperience(experience string, cursor string) (*JobResponse, *utils.ApplicationError) {
+	fmt.Println(experience)
+	if experience == "Intern" {
+		return queryIntern(cursor)
+	} else if experience == "Entry" {
+		return queryEntry(cursor)
+	} else if experience == "Mid" {
+
+	} else if experience == "Senior" {
+		return querySenior(cursor)
+	}
+	return nil, nil
+}
+
+func queryEntry(cursor string) (*JobResponse, *utils.ApplicationError) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, dbPrepareErr := db.Prepare(`SELECT 
+									ej.job_uuid, ej.job_title, ej.job_link, ej.job_location, ej.job_posted,  ej.job_idx, 
+									c.company_name, c.company_cloudinary 
+									FROM companies c  
+									INNER JOIN jobs_pivot jp ON
+									jp.company_uuid = c.company_uuid  
+									INNER JOIN entry_jobs ej ON
+									jp.job_uuid = ej.job_uuid 
+									WHERE ej.job_idx <= ?  
+									AND active = 1 
+									ORDER BY ej.job_idx DESC 
+									LIMIT 21;`)
+	if dbPrepareErr != nil {
+		panic(dbPrepareErr.Error())
+	}
+	res, queryErr := stmt.Query(cursor)
+	if queryErr != nil {
+		panic(queryErr.Error())
+	}
+	jobResponse := experienceTableScan(res)
+	return jobResponse, nil
+}
+
+func queryIntern(cursor string) (*JobResponse, *utils.ApplicationError) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, dbPrepareErr := db.Prepare(`SELECT 
+									ij.job_uuid, ij.job_title, ij.job_link, ij.job_location, ij.job_posted,  ij.job_idx, 
+									c.company_name, c.company_cloudinary 
+									FROM companies c  
+									INNER JOIN jobs_pivot jp ON
+									jp.company_uuid = c.company_uuid  
+									INNER JOIN intern_jobs ij ON
+									jp.job_uuid = ij.job_uuid 
+									WHERE ij.job_idx <= ?  
+									AND active = 1 
+									ORDER BY ij.job_idx DESC 
+									LIMIT 21;`)
+	if dbPrepareErr != nil {
+		panic(dbPrepareErr.Error())
+	}
+	res, queryErr := stmt.Query(cursor)
+	if queryErr != nil {
+		panic(queryErr.Error())
+	}
+	jobResponse := experienceTableScan(res)
+	return jobResponse, nil
+}
+
+func querySenior(cursor string) (*JobResponse, *utils.ApplicationError) {
+	db := dbconf.DbConn()
+	defer db.Close()
+
+	stmt, dbPrepareErr := db.Prepare(`SELECT 
+									sj.job_uuid, sj.job_title, sj.job_link, sj.job_location, sj.job_posted,  sj.job_idx, 
+									c.company_name, c.company_cloudinary 
+									FROM companies c  
+									INNER JOIN jobs_pivot jp ON
+									jp.company_uuid = c.company_uuid  
+									INNER JOIN senior_jobs sj ON
+									jp.job_uuid = sj.job_uuid 
+									WHERE sj.job_idx <= ?  
+									AND active = 1 
+									ORDER BY sj.job_idx DESC 
+									LIMIT 21;`)
+	if dbPrepareErr != nil {
+		panic(dbPrepareErr.Error())
+	}
+	res, queryErr := stmt.Query(cursor)
+	if queryErr != nil {
+		panic(queryErr.Error())
+	}
+	jobResponse := experienceTableScan(res)
+	return jobResponse, nil
+}
+
+func experienceTableScan(res *sql.Rows) *JobResponse {
+	var index = 0
+	job := []*Job{}
+	cursor := &Cursor{}
+	jobResponse := &JobResponse{}
+
+	for res.Next() {
+		var JobUUID, JobTitle, JobLink, JobLocation string
+		var JobPosted, JobIdx int64
+		var CompanyName, Cloudinary string
+
+		scanErr := res.Scan(&JobUUID, &JobTitle, &JobLink, &JobLocation, &JobPosted, &JobIdx, &CompanyName, &Cloudinary)
+		if scanErr != nil {
+			panic(scanErr.Error())
+		}
+		if index == 20 {
+			cursor.Cursor = JobIdx
+		} else {
+			jobRow := &Job{}
+			jobRow.JobUUID = JobUUID
+			jobRow.JobTitle = JobTitle
+			jobRow.JobLink = JobLink
+			jobRow.JobLocation = JobLocation
+			jobRow.JobPosted = JobPosted
+			jobRow.JobIdx = JobIdx
+			jobRow.CompanyName = CompanyName
+			jobRow.Cloudinary = Cloudinary
+			job = append(job, jobRow)
+		}
+		index++
+	}
+	jobResponse.Cursor = cursor
+	jobResponse.Job = job
+	return jobResponse
 }

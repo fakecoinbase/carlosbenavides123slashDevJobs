@@ -26,7 +26,10 @@ function Home({
   setLoading,
   setCursor,
   setApiCalled,
-  apiCalled
+  apiCalled,
+  expCursor,
+  experience,
+  setExpCursor
 }) {
   var hasMore;
 
@@ -43,39 +46,38 @@ function Home({
           setCursor(json["Cursor"]["next_cursor"])
           setApiCalled(false)
         });
-    } else if (locCursor != undefined && cursor != 0) {
+    } else if (locCursor != undefined && locCursor != 0) {
       setLoading(true);
       console.log("fetch more data location")
       setApiCalled(true)
       axios.get(`http://localhost:8080/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
         var json = res.data
         setJobs(jobs => jobs.concat(json["Job"]));
-        setHomePage(jobs => jobs.concat(json["Job"]));
         setLoading(false);
         setLocCursor(json["Cursor"]["next_cursor"])
         setApiCalled(false)
-      });
-      
+      });  
+    } else if (expCursor != undefined && expCursor != 0) {
+      setLoading(true);
+      setApiCalled(true)
+      axios.get(`http://localhost:8080/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
+      .then(res => {
+        var json = res.data
+        setJobs(jobs => jobs.concat(json["Job"]));
+        setLoading(false);
+        setExpCursor(json["Cursor"]["next_cursor"])
+        setApiCalled(false)
+      });  
     }
-    //   if (cursor != undefined && cursor != 0) {
-    //     console.log(cursor)
-    //     hasMore = false
-    //     setLoading(true);
-    //     axios.get(`http://localhost:8080/rest/api/v1/jobs/index?timestamp=${cursor}`).then(res => {
-    //       var json = res.data
-    //       setJobs(jobs => jobs.concat(json["Job"]));
-    //       setHomePage(jobs => jobs.concat(json["Job"]));
-    //       setLoading(false);
-    //       setCursor(json["Cursor"]["next_cursor"])
-    //     });
-    //   }
   }
 
   function hasMore() {
+    console.log(expCursor)
     if(apiCalled === true) return false
     console.log("##############HAS MOREEEEEEEEEEE", locCursor, cursor)
     if(locCursor !== undefined && locCursor !== 0) return true
     if (cursor !== undefined && cursor !== 0) return true
+    if (expCursor !== undefined && cursor !== 0) return true
     return false
   }
 

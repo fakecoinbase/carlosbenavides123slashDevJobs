@@ -77,3 +77,19 @@ func GetJobsByLocation(r *http.Request) (*job.JobResponse, *utils.ApplicationErr
 	}
 	return job.GetJobsByLocation(loc, jobIdx)
 }
+
+func GetJobsByExperience(r *http.Request) (*job.JobResponse, *utils.ApplicationError) {
+	cursor := r.URL.Query().Get("cursor")
+	experience := r.URL.Query().Get("experience")
+	if experience == "" {
+		return nil, &utils.ApplicationError{
+			Message:    fmt.Sprintf("Experience is required!"),
+			StatusCode: http.StatusBadRequest,
+			Code:       "Experience Missing.",
+		}
+	}
+	if cursor == "" {
+		cursor = "2147000"
+	}
+	return job.GetJobsByExperience(experience, cursor)
+}

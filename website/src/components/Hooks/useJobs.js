@@ -25,6 +25,7 @@ export function useJobs() {
 
   const [cursor, setCursor] = useState(0)
   const [locCursor, setLocCursor] = useState("")
+  const [expCursor, setExpCursor] = useState("")
 
   const [apiCalled, setApiCalled] = useState(true)
 
@@ -106,15 +107,15 @@ export function useJobs() {
     }
   }, [location])
 
+  // useEffect(() => {
+  //   if(experience === "") {
+  //     setFilteredJobs([])
+  //   }
+  // }, [experience])
+
   useEffect(() => {
     homepageCall()
   }, []);
-
-  // useEffect(() => {
-  //   if(cursor === ""){
-  //     setScrollMore(false)
-  //   }
-  // }, [cursor])
 
   function homepageCall() {
     setLoading(true);
@@ -133,8 +134,9 @@ export function useJobs() {
   useEffect(() => {
     if (location === "" && experience === "" && company == "") {
       homepageCall()
-      setCursor("")
       setLocCursor("")
+      setExpCursor("")
+      setFilteredJobs([])
       return;
     }
     // rest api call if companyPage doesn't equal to company name
@@ -180,6 +182,15 @@ export function useJobs() {
     } else if(company === "" && location !== "" && experience !== "" && typeof(locCursor) === 'number') {
       setFilteredJobs(jobs)
       setJobs(filterByExperience(jobs, experience))
+    } else if(company === "" && location === "" && experience !== "") {
+      if (checkMemoryJobs()) {
+        apiJobsByExperience()
+      } else {
+        setJobs(filteredJobs)
+      }
+    } else if(location !== "" && experience !== "" && typeof(expCursor) === 'number') {
+      setFilteredJobs(jobs)
+      setJobs(filterByLocation(jobs, location))
     }
 
   }, [company, location, experience]);
@@ -209,7 +220,23 @@ export function useJobs() {
       setApiCalled(false)
     });
   }
-  
+
+  function apiJobsByExperience() {
+    setLoading(true)
+    setCursor(undefined)
+    setLocCursor(undefined)
+    setApiCalled(true)
+    console.log(experience)
+    axios.get(`http://localhost:8080/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
+    .then(res => {
+      var json = res.data;
+      setJobs(json["Job"])
+      setFilteredJobs(json["Job"])
+      setExpCursor(json["Cursor"]["next_cursor"])
+      setLoading(false)
+      setApiCalled(false)
+    }) 
+  }  
 
   function filterByExperience(data, experience) {
     return data.filter(i => i.level === experience);
@@ -278,6 +305,9 @@ export function useJobs() {
     locCursor,
     setLocCursor,
     setApiCalled,
-    apiCalled
+    apiCalled,
+    expCursor,
+    experience,
+    setExpCursor
   };
 }

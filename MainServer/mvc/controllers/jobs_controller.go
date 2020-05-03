@@ -78,3 +78,17 @@ func GetCompanyList(w http.ResponseWriter, r *http.Request) {
 	jsonValue, _ := json.Marshal(res)
 	w.Write(jsonValue)
 }
+
+func GetJobsByExperience(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	res, apiErr := services.GetJobsByExperience(r)
+	if apiErr != nil {
+		jsonValue, _ := json.Marshal(apiErr)
+		w.WriteHeader(apiErr.StatusCode)
+		w.Write([]byte(jsonValue))
+		return
+	}
+	jsonValue, _ := json.Marshal(res)
+	w.Write(jsonValue)
+}
