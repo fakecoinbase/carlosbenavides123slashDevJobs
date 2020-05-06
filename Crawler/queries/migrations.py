@@ -9,6 +9,14 @@ def run_migrations(cursor):
                         PRIMARY KEY(company_uuid) \
                         )")
 
+    cursor.execute("CREATE TABLE IF NOT EXISTS company_scrape_details \
+                    (company_uuid VARCHAR(255) NOT NULL, \
+                    wanted_departments VARCHAR(255), \
+                    wanted_locations VARCHAR(255), \
+                    PRIMARY KEY(company_uuid), \
+                    FOREIGN KEY(company_uuid) REFERENCES companies(company_uuid) \
+                    )")
+
     cursor.execute("CREATE TABLE IF NOT EXISTS remembered_jobs \
                         ( job_id VARCHAR(255) NOT NULL, \
                         company_uuid VARCHAR(255) NOT NULL, \

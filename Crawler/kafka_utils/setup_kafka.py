@@ -21,11 +21,11 @@ class KafkaMsg():
 						acks='all'
 						)
 	def send_protobuf_message(self, topic, data):
-		print(topic, data)
+		print("topic", topic)
+		# self.producer.send(topic, data)
 		self.producer.send(topic, data.SerializeToString())
-		# time.sleep(0.1)
+		time.sleep(0.1)
 
 	def send_json_message(self, topic, data):
 		# self.producer.send('foo', b'some_message_bytes')
 		self.producer.send(topic, data)
-	

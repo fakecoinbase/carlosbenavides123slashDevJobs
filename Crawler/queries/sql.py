@@ -51,3 +51,19 @@ class Query(object):
     def insert_new_location(self, location, company_name):
         location_sql = "INSERT INTO locations (location, company_name) VALUES (%s, %s)"
         self.cursor.execute(location_sql, (location, company_name))
+
+
+    # for main server/devjobs
+    def add_new_company(self, company, gh, lvr, oth):
+        insert_new_companies_sql = "INSERT INTO companies (company_uuid, company_name, company_scrape_website, greenhouse, lever, other) VALUES (%s, %s, %s, %s, %s, %s)"
+        self.cursor.execute(insert_new_companies_sql, (company.CompanyUUID, company.CompanyName, company.CompanyWebsite, gh, lvr, oth))
+
+    def add_new_scrape_details(self, company_uuid):
+        insert_new_scrape_details = "INSERT INTO company_scrape_details (company_uuid) VALUES (%s)"
+        self.cursor.execute(insert_new_scrape_details, (company_uuid,))
+
+    def get_companies_from_scrappy(self):
+        print("ping sql")
+        companies_sql = "SELECT c.company_uuid, c.company_name, c.company_scrape_website from companies c"
+        self.cursor.execute(companies_sql)
+        return self.cursor.fetchall()

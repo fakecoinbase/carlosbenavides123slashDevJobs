@@ -4,11 +4,14 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/dbconf"
+	"github.com/carlosbenavides123/DevJobs/MainServer/kafkaconf"
 	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/utils"
+	"github.com/carlosbenavides123/DevJobs/MainServer/pb/company/companypb"
+	"github.com/golang/protobuf/proto"
 	uuid "github.com/nu7hatch/gouuid"
+	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 func GetJobs(jobIdx string) (*JobResponse, *utils.ApplicationError) {
@@ -91,6 +94,10 @@ func GetJobs(jobIdx string) (*JobResponse, *utils.ApplicationError) {
 }
 
 func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
+	p := kafkaconf.NewProducer()
+	defer p.Close()
+	topic := "AddNewCompany"
+
 	db := dbconf.DbConn()
 	defer db.Close()
 
@@ -103,22 +110,29 @@ func CreateJob(newCompany *NewCompany) (*NewCompany, *utils.ApplicationError) {
 	}
 	res.Exec(uuid.String(), newCompany.CompanyName, newCompany.Cloudinary)
 
-	db2 := dbconf.DbConnToScrappy()
-	defer db2.Close()
-	res2, dbPrepareErr2 := db2.Prepare(`INSERT INTO companies(company_uuid, company_name, company_scrape_website, greenhouse, lever, other)
-										VALUES(?, ?, ?, ?, ?, ?)`)
-	if dbPrepareErr2 != nil {
-		panic(error(dbPrepareErr2))
+	newCompanyPb := &companypb.Company{
+		CompanyName:    newCompany.CompanyName,
+		CompanyUUID:    uuid.String(),
+		CompanyWebsite: newCompany.CompanyWebsite,
 	}
-	var greenhouse, lever, other bool
-	if strings.Contains(newCompany.CompanyWebsite, "greenhouse") {
-		greenhouse = true
-	} else if strings.Contains(newCompany.CompanyWebsite, "lever") {
-		lever = true
-	} else {
-		other = true
+	data, err := proto.Marshal(newCompanyPb)
+	if err != nil {
+		panic(err.Error())
 	}
-	res2.Exec(uuid.String(), newCompany.CompanyName, newCompany.CompanyWebsite, greenhouse, lever, other)
+	produceKafkaMessage(p, topic, data)
+	go func() {
+		for e := range p.Events() {
+			switch ev := e.(type) {
+			case *kafka.Message:
+				if ev.TopicPartition.Error != nil {
+					fmt.Println("error sending message")
+					produceKafkaMessage(p, topic, data)
+				} else {
+					fmt.Println("message was sent successfully")
+				}
+			}
+		}
+	}()
 	return newCompany, nil
 }
 
@@ -402,4 +416,11 @@ func experienceTableScan(res *sql.Rows) *JobResponse {
 	jobResponse.Cursor = cursor
 	jobResponse.Job = job
 	return jobResponse
+}
+
+func produceKafkaMessage(p *kafka.Producer, topic string, data []byte) {
+	p.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          data,
+	}, nil)
 }

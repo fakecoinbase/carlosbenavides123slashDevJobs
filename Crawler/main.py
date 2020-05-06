@@ -11,6 +11,7 @@ from queries.sql import Query
 from Utils.Utils import Utils
 
 from kafka_utils.setup_kafka import KafkaMsg
+from kafka_utils.setup_kafka_consumer import KafkaConsumerScheduler
 
 from Scrape.Lever import lever
 from Scrape.GreenHouse import greenhouse
@@ -22,6 +23,9 @@ def main():
         cursor = None
         if connection.is_connected():
             cursor = connection.cursor()
+            print("cursor is connected!")
+        else:
+            print("cursor is not connected!")
         # drop_all_tables(cursor)
         # run_migrations(cursor)
         # return
@@ -30,17 +34,20 @@ def main():
         utils = Utils()
         kafka = KafkaMsg()
         kafka.setup_protobuf_producer()
+        kafka_consumer = KafkaConsumerScheduler(kafka, query)
+        kafka_consumer.start()
 
-        companies = query.get_all_companies()
-
-        for company_uuid, company_name, company_scrape_website, gh, lvr, oth in companies:
-            time.sleep(0.2)
-            if gh:
-                greenhouse(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            elif lvr:
-                lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
-            else:
-                print("oops?")
+        while True:
+            companies = query.get_all_companies()
+            time.sleep(4)
+            for company_uuid, company_name, company_scrape_website, gh, lvr, oth in companies:
+                time.sleep(0.4)
+                if gh:
+                    greenhouse(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+                elif lvr:
+                    lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
+                else:
+                    print("oops?")
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:

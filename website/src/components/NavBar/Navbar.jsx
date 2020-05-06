@@ -5,6 +5,8 @@ import "./Navbar.scss";
 import Home from "../Home/Home";
 import JobForm from "../JobForm/JobForm";
 import NavDropdown from "../Dropdown/Dropdown";
+import CMS from "../CMS/CMS";
+
 function Navbar({ joblist, sw }) {
   console.log(sw);
   const [hamburgerClicked, setHamburgerClicked] = useState(false)
@@ -46,6 +48,9 @@ function Navbar({ joblist, sw }) {
           </Route>
           <Route path="/jobform">
             <JobForm />
+          </Route>
+          <Route path="/cms">
+                <CMS />
           </Route>
           <Route path="/">
             <NavDropdown {...joblist}/>

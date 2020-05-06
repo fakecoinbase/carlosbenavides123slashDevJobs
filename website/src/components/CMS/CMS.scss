@@ -1,0 +1,14 @@
+
+.cms__container {
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto;
+    padding: 0% 5% 0% 5%;
+}
+
+.cms__section {
+    padding: 0% 5% 0 5%;
+    display: flex;
+    border: 2px solid black;
+    float: left;
+}

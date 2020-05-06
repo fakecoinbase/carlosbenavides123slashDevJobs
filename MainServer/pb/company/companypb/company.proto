@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "companypb";
+
+message Company {
+    string CompanyUUID = 1;
+    string CompanyName = 2;
+    string CompanyWebsite = 3;
+}
+
+message CompanyResponse {
+    repeated Company companies = 1;
+}
