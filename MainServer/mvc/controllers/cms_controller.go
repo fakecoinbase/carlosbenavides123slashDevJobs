@@ -19,3 +19,9 @@ func GetCmsHomeData(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(result))
 	}
 }
+
+func GetCmsCompanyData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	services.GetCmsCompanyData(r)
+}

@@ -58,12 +58,17 @@ class Query(object):
         insert_new_companies_sql = "INSERT INTO companies (company_uuid, company_name, company_scrape_website, greenhouse, lever, other) VALUES (%s, %s, %s, %s, %s, %s)"
         self.cursor.execute(insert_new_companies_sql, (company.CompanyUUID, company.CompanyName, company.CompanyWebsite, gh, lvr, oth))
 
-    def add_new_scrape_details(self, company_uuid):
-        insert_new_scrape_details = "INSERT INTO company_scrape_details (company_uuid) VALUES (%s)"
-        self.cursor.execute(insert_new_scrape_details, (company_uuid,))
+    def add_new_scrape_details(self, company_uuid, company_name):
+        insert_new_scrape_details = "INSERT INTO company_scrape_details (company_uuid, company_name) VALUES (%s, %s)"
+        self.cursor.execute(insert_new_scrape_details, (company_uuid, company_name))
 
     def get_companies_from_scrappy(self):
         print("ping sql")
         companies_sql = "SELECT c.company_uuid, c.company_name, c.company_scrape_website from companies c"
         self.cursor.execute(companies_sql)
         return self.cursor.fetchall()
+
+    def get_cms_company_details(self, company_uuid):
+        company_detail_sql = "SELECT * from companies c INNER JOIN company_scrape_details csd ON c.company_name = csd.company_name WHERE c.company_name = (%s)"
+        self.cursor.execute(company_detail_sql, (company_uuid,))
+        return self.cursor.fetchone()

@@ -10,7 +10,8 @@ def run_migrations(cursor):
                         )")
 
     cursor.execute("CREATE TABLE IF NOT EXISTS company_scrape_details \
-                    (company_uuid VARCHAR(255) NOT NULL, \
+                    (company_uuid VARCHAR(255) DEFAULT '' NOT NULL, \
+                    company_name VARCHAR(255) DEFAULT '' NOT NULL, \
                     wanted_departments VARCHAR(255), \
                     wanted_locations VARCHAR(255), \
                     PRIMARY KEY(company_uuid), \

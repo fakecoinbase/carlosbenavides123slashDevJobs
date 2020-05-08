@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "companycmspb";
+
+message CompanyCmsDetails {
+    string CompanyName = 1;
+    string CompanyWebsite = 2;
+    string WantedDepartments = 3;
+    string WantedLocations = 4;
+    bool GreenHouse = 5;
+    bool Lever = 6;
+    bool Other = 7;
+}

@@ -31,6 +31,7 @@ func main() {
 	// rest apis
 
 	r.HandleFunc("/rest/api/v1/cms/home", controllers.GetCmsHomeData).Methods("GET")
+	r.HandleFunc("/rest/api/v1/cms/companydetails", controllers.GetCmsCompanyData).Queries("company", "{company:[A-Za-z0-9 ]*$}").Methods("GET")
 
 	r.HandleFunc("/rest/api/v1/jobs/index", controllers.GetJobs).Queries("timestamp", "{[0-9]+}").Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/search/location", controllers.GetJobsByLocation).Queries("cursor", "{cursor:[0-9]*$}", "location", "{location:[a-zA-Z ]*$}").Methods("GET")

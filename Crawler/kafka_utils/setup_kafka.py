@@ -21,7 +21,7 @@ class KafkaMsg():
 						acks='all'
 						)
 	def send_protobuf_message(self, topic, data):
-		print("topic", topic)
+		print("topic", data)
 		# self.producer.send(topic, data)
 		self.producer.send(topic, data.SerializeToString())
 		time.sleep(0.1)

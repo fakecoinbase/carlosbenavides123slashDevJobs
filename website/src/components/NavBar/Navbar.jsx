@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 // import Modal from "react-modal";
+import { useParams } from 'react-router';
+
 import "./Navbar.scss";
 import Home from "../Home/Home";
 import JobForm from "../JobForm/JobForm";
 import NavDropdown from "../Dropdown/Dropdown";
 import CMS from "../CMS/CMS";
+import CMSInfo from "../CMSInfo/CMSInfo"
 
 function Navbar({ joblist, sw }) {
   console.log(sw);
@@ -49,6 +52,9 @@ function Navbar({ joblist, sw }) {
           <Route path="/jobform">
             <JobForm />
           </Route>
+
+          <Route path="/cms/:name" component={CMSInfo} />
+
           <Route path="/cms">
                 <CMS />
           </Route>

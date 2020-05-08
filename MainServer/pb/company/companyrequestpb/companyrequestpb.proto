@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+option go_package = "companyrequestpb";
+
+message CompanyRequest {
+    string CompanyName = 1;
+}
