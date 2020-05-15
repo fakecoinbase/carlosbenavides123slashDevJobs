@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/services"
 	"github.com/golang/protobuf/jsonpb"
+	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 func GetCmsHomeData(w http.ResponseWriter, r *http.Request) {
@@ -20,8 +22,14 @@ func GetCmsHomeData(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetCmsCompanyData(w http.ResponseWriter, r *http.Request) {
+func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	services.GetCmsCompanyData(r)
+	result := services.GetCmsCompanyData(p, c, r)
+	jsonValue, _ := json.Marshal(result)
+	w.Write([]byte(jsonValue))
+}
+
+func ReverseRequestWithKafka(p *kafka.Producer, c *kafka.Consumer, f func(p *kafka.Producer, c *kafka.Consumer, w http.ResponseWriter, r *http.Request)) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { f(p, c, w, r) })
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/consumergroups"
+	"github.com/carlosbenavides123/DevJobs/MainServer/kafkaconf"
 	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/controllers"
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
@@ -26,12 +27,17 @@ func main() {
 
 	r := mux.NewRouter()
 
+	p := kafkaconf.NewProducer()
+	cmsconsumer := kafkaconf.NewConsumer()
+	fmt.Print(p)
+
 	// websocket for future
 
 	// rest apis
 
 	r.HandleFunc("/rest/api/v1/cms/home", controllers.GetCmsHomeData).Methods("GET")
-	r.HandleFunc("/rest/api/v1/cms/companydetails", controllers.GetCmsCompanyData).Queries("company", "{company:[A-Za-z0-9 ]*$}").Methods("GET")
+	// r.HandleFunc("/rest/api/v1/cms/companydetails", controllers.GetCmsCompanyData).Queries("company", "{company:[A-Za-z0-9 ]*$}").Methods("GET")
+	r.Handle("/rest/api/v1/cms/companydetails", controllers.ReverseRequestWithKafka(p, cmsconsumer, controllers.GetCmsCompanyData)).Queries("company", "{company:[A-Za-z0-9 ]*$}").Methods("GET")
 
 	r.HandleFunc("/rest/api/v1/jobs/index", controllers.GetJobs).Queries("timestamp", "{[0-9]+}").Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/search/location", controllers.GetJobsByLocation).Queries("cursor", "{cursor:[0-9]*$}", "location", "{location:[a-zA-Z ]*$}").Methods("GET")
@@ -46,7 +52,7 @@ func main() {
 	r.HandleFunc("/rest/api/v1/jobs/company/location/{location:[A-Za-z ]*$}", controllers.GetCompaniesByLocation).Methods("GET")
 	r.HandleFunc("/rest/api/v1/jobs/company/company/{company:[A-Za-z0-9 ]*$}", controllers.GetLocationsByCompany).Methods("GET")
 
-	c.SubscribeTopics([]string{"new_job", "del_job", "job_location"}, nil)
+	c.SubscribeTopics([]string{"new_job", "del_job", "job_location", "ResponseCompanyCMS"}, nil)
 	go http.ListenAndServe(":8080", r)
 
 	for {
@@ -64,6 +70,9 @@ func main() {
 			case "job_location":
 				fmt.Println("new job location")
 				consumergroups.AddNewJobLocation(msg)
+				break
+			case "ResponseCompanyCMS":
+				fmt.Println(msg)
 				break
 			default:
 				break
