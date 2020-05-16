@@ -92,7 +92,7 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 	produceKafkaMessage(p, topicProduce, companyrequest)
 
 	run := true
-	var companyresponse &companycmspb.CompanyCmsDetails{}
+	var companyresponse *companycmspb.CompanyCmsDetails
 	for run == true {
 		msg, err := c.ReadMessage(-1)
 
@@ -103,12 +103,10 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 			switch topic {
 			case "ResponseCompanyCMS":
 				c.Commit()
-				companycmsmessage := &companycmspb.CompanyCmsDetails{}
-				if err := proto.Unmarshal(companyresponse.Value, companycmsmessage); err != nil {
+				if err := proto.Unmarshal(msg.Value, companyresponse); err != nil {
 					log.Fatalln("Failed to parse Job:", err)
 				}
-				if companycmsmessage.CompanyName == company {
-					companyresponse = msg
+				if companyresponse.CompanyName == company {
 					run = false
 				}
 				break
@@ -119,13 +117,13 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 	}
 
 	companycms := &CompanyCms{}
-	companycms.CompanyName = companycmsmessage.CompanyName
-	companycms.CompanyWebsite = companycmsmessage.CompanyWebsite
-	companycms.GreenHouse = companycmsmessage.GreenHouse
-	companycms.Lever = companycmsmessage.Lever
-	companycms.Other = companycmsmessage.Other
-	companycms.WantedDepartments = companycmsmessage.WantedDepartments
-	companycms.WantedLocations = companycmsmessage.WantedLocations
+	companycms.CompanyName = companyresponse.CompanyName
+	companycms.CompanyWebsite = companyresponse.CompanyWebsite
+	companycms.GreenHouse = companyresponse.GreenHouse
+	companycms.Lever = companyresponse.Lever
+	companycms.Other = companyresponse.Other
+	companycms.WantedDepartments = companyresponse.WantedDepartments
+	companycms.WantedLocations = companyresponse.WantedLocations
 
 	return companycms
 }
