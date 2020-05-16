@@ -92,7 +92,7 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 	produceKafkaMessage(p, topicProduce, companyrequest)
 
 	run := true
-	var companyresponse *kafka.Message
+	var companyresponse &companycmspb.CompanyCmsDetails{}
 	for run == true {
 		msg, err := c.ReadMessage(-1)
 
@@ -102,17 +102,20 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 			fmt.Println(topic)
 			switch topic {
 			case "ResponseCompanyCMS":
-				companyresponse = msg
-				run = false
+				c.Commit()
+				companycmsmessage := &companycmspb.CompanyCmsDetails{}
+				if err := proto.Unmarshal(companyresponse.Value, companycmsmessage); err != nil {
+					log.Fatalln("Failed to parse Job:", err)
+				}
+				if companycmsmessage.CompanyName == company {
+					companyresponse = msg
+					run = false
+				}
 				break
 			default:
 				break
 			}
 		}
-	}
-	companycmsmessage := &companycmspb.CompanyCmsDetails{}
-	if err := proto.Unmarshal(companyresponse.Value, companycmsmessage); err != nil {
-		log.Fatalln("Failed to parse Job:", err)
 	}
 
 	companycms := &CompanyCms{}
@@ -124,20 +127,6 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 	companycms.WantedDepartments = companycmsmessage.WantedDepartments
 	companycms.WantedLocations = companycmsmessage.WantedLocations
 
-	// fmt.Println(companyresponse)
-	go func() {
-		for e := range p.Events() {
-			switch ev := e.(type) {
-			case *kafka.Message:
-				if ev.TopicPartition.Error != nil {
-					fmt.Println("error sending message")
-					produceKafkaMessage(p, topicProduce, companyrequest)
-				} else {
-					fmt.Println("message was sent successfully")
-				}
-			}
-		}
-	}()
 	return companycms
 }
 
