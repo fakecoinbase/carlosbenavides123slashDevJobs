@@ -17,7 +17,7 @@ function JobForm() {
 
     console.log(data);
     axios
-      .post("http://localhost:8080/rest/api/v1/jobs/", data)
+      .post(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/`, data)
       .then(res => {
         setCompany("");
         setCareerPage("");

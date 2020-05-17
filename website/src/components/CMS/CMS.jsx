@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 function CMS() {
     const [companies, setCompanies] = useState([])
     useEffect(() => {
-        axios.get(`http://localhost:8080/rest/api/v1/jobs/company/list/`).then(res => {
+        axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/list/`).then(res => {
             let json = res.data
             setCompanies(json)
         })

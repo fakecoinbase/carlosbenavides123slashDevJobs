@@ -38,7 +38,7 @@ function Home({
       console.log("fetch more data normal")
       setApiCalled(true)
         setLoading(true);
-        axios.get(`http://localhost:8080/rest/api/v1/jobs/index?timestamp=${cursor}`).then(res => {
+        axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/index?timestamp=${cursor}`).then(res => {
           var json = res.data
           setJobs(jobs => jobs.concat(json["Job"]));
           setHomePage(jobs => jobs.concat(json["Job"]));
@@ -50,7 +50,7 @@ function Home({
       setLoading(true);
       console.log("fetch more data location")
       setApiCalled(true)
-      axios.get(`http://localhost:8080/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
+      axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
         var json = res.data
         setJobs(jobs => jobs.concat(json["Job"]));
         setLoading(false);
@@ -60,7 +60,7 @@ function Home({
     } else if (expCursor != undefined && expCursor != 0) {
       setLoading(true);
       setApiCalled(true)
-      axios.get(`http://localhost:8080/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
+      axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
       .then(res => {
         var json = res.data
         setJobs(jobs => jobs.concat(json["Job"]));

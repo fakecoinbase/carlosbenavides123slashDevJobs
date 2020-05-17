@@ -9,7 +9,7 @@ function CMS() {
     console.log(params.name, "YEEEET")
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/rest/api/v1/cms/companydetails?company=${params.name}`)
+        axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/cms/companydetails?company=${params.name}`)
         .then( res => {
             console.log(res)
         })

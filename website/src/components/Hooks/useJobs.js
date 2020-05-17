@@ -31,7 +31,7 @@ export function useJobs() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/rest/api/v1/jobs/company/list/")
+      .get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/list/`)
       .then(res => {
         let temp = [];
         var myMap = new Map();
@@ -59,7 +59,7 @@ export function useJobs() {
 
   useEffect(() => {
     if(company !== "") {
-      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/company/${company}`)
+      axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/company/${company}`)
       .then( res => {
         var json = res.data
         json = json.sort(function(a, b) {
@@ -84,7 +84,7 @@ export function useJobs() {
 
   useEffect(() => {
     if(location !== "") {
-      axios.get(`http://localhost:8080/rest/api/v1/jobs/company/location/${location}`)
+      axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/location/${location}`)
       .then( res => {
         var json = res.data
         json = json.sort(function(a, b) {
@@ -120,7 +120,7 @@ export function useJobs() {
   function homepageCall() {
     setLoading(true);
     setApiCalled(true)
-    axios.get("http://localhost:8080/rest/api/v1/jobs/index?timestamp=").then(res => {
+    axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/index?timestamp=`).then(res => {
       var json = res.data
       setJobs(json["Job"]);
       setHomePage(json["Job"]);
@@ -153,7 +153,7 @@ export function useJobs() {
       let uuid = companyUUID.get(company);
       setLoading(true);
       axios
-        .get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
+        .get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/search/${uuid}`)
         .then(res => {
           setJobs(res.data);
           setCompanyPage(res.data);
@@ -209,7 +209,7 @@ export function useJobs() {
     setLoading(true);
     setCursor(undefined)
     setApiCalled(true)
-    axios.get(`http://localhost:8080/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
+    axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
       var json = res.data
       console.log(json, "JOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBS")
       setJobs(json["Job"]);
@@ -227,7 +227,7 @@ export function useJobs() {
     setLocCursor(undefined)
     setApiCalled(true)
     console.log(experience)
-    axios.get(`http://localhost:8080/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
+    axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
     .then(res => {
       var json = res.data;
       setJobs(json["Job"])
@@ -252,7 +252,7 @@ export function useJobs() {
       setLoading(true);
       setApiCalled(true)
       axios
-        .get(`http://localhost:8080/rest/api/v1/jobs/company/search/${uuid}`)
+        .get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/search/${uuid}`)
         .then(res => {
           setJobs(res.data);
           setCompanyPage(res.data);
