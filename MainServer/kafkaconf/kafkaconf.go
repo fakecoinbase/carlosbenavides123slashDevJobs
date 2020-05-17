@@ -5,7 +5,7 @@ import (
 )
 
 func NewProducer() (p *kafka.Producer) {
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "192.168.1.66:19092"})
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "64.255.121.38:19092"})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -14,7 +14,7 @@ func NewProducer() (p *kafka.Producer) {
 
 func NewConsumer() (c *kafka.Consumer) {
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": "192.168.1.66:19092",
+		"bootstrap.servers": "64.255.121.38:19092",
 		"group.id":          "CMS",
 	})
 	if err != nil {
