@@ -27,7 +27,7 @@ def greenhouse(company_uuid, company_name, company_website_scrape, query, utils,
     for department in reduce_departments:
         if department["name"] in company_departments_set or department["name"] in wanted_departments:
             for job in department["jobs"]:
-                if job["location"]["name"] in company_locations_set or job["location"]["name"] in wanted_departments:
+                if job["location"]["name"] in company_locations_set or job["location"]["name"] in wanted_locations:
                     extract_job_details(job, company_uuid, company_website_scrape, company_name, check_job_list, query, utils, kafka)
 
     # for department in reduce_departments:

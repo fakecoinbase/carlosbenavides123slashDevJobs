@@ -48,6 +48,7 @@ def main():
                     lever(company_uuid, company_name, company_scrape_website, query, utils, kafka)
                 else:
                     print("oops?")
+            connection.commit()
     except Error as e:
         print("Error while connecting to MySQL", e)
     finally:
