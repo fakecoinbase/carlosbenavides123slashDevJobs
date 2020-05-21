@@ -4,7 +4,6 @@ import axios from "axios";
 import { css } from "@emotion/core";
 import ClipLoader from "react-spinners/ClipLoader";
 import Button from "../Button/Button";
-import { RadioGroup, RadioButton } from "react-radio-buttons";
 
 const override = css`
   margin: 0 auto;
