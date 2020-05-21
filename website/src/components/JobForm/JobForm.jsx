@@ -15,14 +15,12 @@ function JobForm() {
       cloudinary: cloudinary
     });
 
-    console.log(data);
     axios
       .post(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/`, data)
       .then(res => {
         setCompany("");
         setCareerPage("");
         setCloudinary("");
-        console.log(res);
       })
       .catch(err => {
         console.log(err);

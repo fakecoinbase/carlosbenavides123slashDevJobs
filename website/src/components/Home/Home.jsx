@@ -35,7 +35,6 @@ function Home({
 
   function fetchMoreData() {
     if (cursor != undefined && cursor != 0 ) {
-      console.log("fetch more data normal")
       setApiCalled(true)
         setLoading(true);
         axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/index?timestamp=${cursor}`).then(res => {
@@ -48,7 +47,6 @@ function Home({
         });
     } else if (locCursor != undefined && locCursor != 0) {
       setLoading(true);
-      console.log("fetch more data location")
       setApiCalled(true)
       axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
         var json = res.data
@@ -72,9 +70,7 @@ function Home({
   }
 
   function hasMore() {
-    console.log(expCursor)
     if(apiCalled === true) return false
-    console.log("##############HAS MOREEEEEEEEEEE", locCursor, cursor)
     if(locCursor !== undefined && locCursor !== 0) return true
     if (cursor !== undefined && cursor !== 0) return true
     if (expCursor !== undefined && cursor !== 0) return true

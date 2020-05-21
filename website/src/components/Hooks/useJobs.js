@@ -128,7 +128,6 @@ export function useJobs() {
       setJobs(json["Job"]);
       setHomePage(json["Job"]);
       setCursor(json["Cursor"]["next_cursor"])
-      console.log(json["Cursor"]["next_cursor"], "NEXT CURSOR")
       setLoading(false);
       setApiCalled(false)
     });
@@ -175,13 +174,11 @@ export function useJobs() {
     }
 
     if(company === "" && location !== "" && experience === "") {
-      console.log(checkMemoryJobs(), "CHECK MEMORY JOBS", filteredJobs)
       if(checkMemoryJobs()) {
         apiJobsByLocation()
       } else {
         setJobs(filteredJobs)
       }
-      console.log("HEEEEEEEEEEEEEEEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEeee")
     } else if(company === "" && location !== "" && experience !== "" && typeof(locCursor) === 'number') {
       setFilteredJobs(jobs)
       setJobs(filterByExperience(jobs, experience))
@@ -214,11 +211,9 @@ export function useJobs() {
     setApiCalled(true)
     axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/location?location=${location}&cursor=${locCursor}`).then(res => {
       var json = res.data
-      console.log(json, "JOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBSJOBS")
       setJobs(json["Job"]);
       setFilteredJobs(json["Job"]);
       setLocCursor(json["Cursor"]["next_cursor"])
-      console.log(json["Cursor"]["next_cursor"], "NEXT CURSOR")
       setLoading(false);
       setApiCalled(false)
     });
@@ -229,7 +224,6 @@ export function useJobs() {
     setCursor(undefined)
     setLocCursor(undefined)
     setApiCalled(true)
-    console.log(experience)
     axios.get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/search/experience?experience=${experience}&cursor=${expCursor}`)
     .then(res => {
       var json = res.data;

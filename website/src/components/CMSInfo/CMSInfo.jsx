@@ -24,8 +24,6 @@ function CMS() {
   const [wantedLocations, setWantedLocations] = useState("");
   const [loading, setLoading] = useState(false);
 
-  console.log(params.name, "YEEEET");
-
   useEffect(() => {
     setLoading(true);
     axios
@@ -57,7 +55,6 @@ function CMS() {
       wanted_departments: wantedDepartments,
       wanted_locations: wantedLocations
     });
-    console.log(data)
     axios.post(
       `${process.env.REACT_APP_REST_API}/rest/api/v1/cms/companydetails/update`,
       data

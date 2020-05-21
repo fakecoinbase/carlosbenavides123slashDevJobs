@@ -12,11 +12,9 @@ import CMSInfo from "../CMSInfo/CMSInfo";
 import DevJobs from './DevJobs.svg' ;
 
 function Navbar({ joblist, sw }) {
-  console.log(sw);
   const [hamburgerClicked, setHamburgerClicked] = useState(false);
   function handleHamburger(e) {
     setHamburgerClicked(!hamburgerClicked);
-    console.log(e, "hamburger event");
   }
   return (
     <>
