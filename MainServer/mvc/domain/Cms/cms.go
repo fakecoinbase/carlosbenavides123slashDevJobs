@@ -1,6 +1,7 @@
 package cms
 
 type CompanyCms struct {
+	CompanyUUID       string `json:"company_uuid"`
 	CompanyName       string `json:"company_name"`
 	CompanyWebsite    string `json:"company_website"`
 	WantedDepartments string `json:"wanted_departments"`

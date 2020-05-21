@@ -3,13 +3,16 @@ package cms
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 
 	"github.com/carlosbenavides123/DevJobs/MainServer/kafkaconf"
+	"github.com/carlosbenavides123/DevJobs/MainServer/mvc/utils"
 	"github.com/carlosbenavides123/DevJobs/MainServer/pb/company/companycmspb"
 	"github.com/carlosbenavides123/DevJobs/MainServer/pb/company/companypb"
 	"github.com/carlosbenavides123/DevJobs/MainServer/pb/company/companyrequestpb"
+	"github.com/carlosbenavides123/DevJobs/MainServer/pb/company/updatecompanypb"
 	"github.com/golang/protobuf/proto"
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
@@ -89,10 +92,24 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 		panic(err.Error())
 	}
 
-	produceKafkaMessage(p, topicProduce, companyrequest)
+	go produceKafkaMessage(p, topicProduce, companyrequest)
+
+	go func() {
+		for e := range p.Events() {
+			switch ev := e.(type) {
+			case *kafka.Message:
+				if ev.TopicPartition.Error != nil {
+					fmt.Println("error sending message")
+					produceKafkaMessage(p, topicProduce, companyrequest)
+				} else {
+					fmt.Println("message was sent successfully")
+				}
+			}
+		}
+	}()
 
 	run := true
-	var companyresponse *companycmspb.CompanyCmsDetails
+	companyresponse := &companycmspb.CompanyCmsDetails{}
 	for run == true {
 		msg, err := c.ReadMessage(-1)
 
@@ -126,6 +143,39 @@ func GetCmsCompanyData(p *kafka.Producer, c *kafka.Consumer, company string) *Co
 	companycms.WantedLocations = companyresponse.WantedLocations
 
 	return companycms
+}
+
+func UpdateCompanyCMSData(updateCompanyDetails *CompanyCms, p *kafka.Producer) (*utils.ApplicationSuccess, *utils.ApplicationError) {
+	topicProduce := "RequestUpdateCms"
+
+	companyCmsRequest := &updatecompanypb.UpdateCompanyDetails{
+		CompanyUUID:       updateCompanyDetails.CompanyUUID,
+		CompanyName:       updateCompanyDetails.CompanyName,
+		CompanyWebsite:    updateCompanyDetails.CompanyWebsite,
+		GreenHouse:        updateCompanyDetails.GreenHouse,
+		Lever:             updateCompanyDetails.Lever,
+		Other:             updateCompanyDetails.Other,
+		WantedDepartments: updateCompanyDetails.WantedDepartments,
+		WantedLocations:   updateCompanyDetails.WantedLocations,
+	}
+
+	companyrequest, err := proto.Marshal(companyCmsRequest)
+
+	if err != nil {
+		return nil, &utils.ApplicationError{
+			Message:    fmt.Sprintf("Form has bad input!"),
+			StatusCode: http.StatusBadRequest,
+			Code:       "Malformed request",
+		}
+	}
+
+	produceKafkaMessage(p, topicProduce, companyrequest)
+
+	return &utils.ApplicationSuccess{
+		Message:    fmt.Sprintf("Update has been received!"),
+		StatusCode: http.StatusAccepted,
+		Code:       "Updated",
+	}, nil
 }
 
 func produceKafkaMessage(p *kafka.Producer, topic string, data []byte) {

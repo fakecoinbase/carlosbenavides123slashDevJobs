@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+var https = require('https')
 export function useJobs() {
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
@@ -29,9 +29,12 @@ export function useJobs() {
 
   const [apiCalled, setApiCalled] = useState(true)
 
+  const httsAgent = new https.Agent({ rejectUnauthorized: false });
+
+
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/list/`)
+      .get(`${process.env.REACT_APP_REST_API}/rest/api/v1/jobs/company/list/`, {httsAgent})
       .then(res => {
         let temp = [];
         var myMap = new Map();

@@ -16,15 +16,16 @@ wanted = ["Browser Extension", "Core", "Discovery", "Engineering", "Frontends", 
 unwanted_title = ["Senior", "Principle", "Manager"]
 
 for item in _reduce:
+    print(item["name"])
+    # for job in item["jobs"]:
+    #     print(job["location"]["name"])
     if item["name"] in wanted:
         for job in item["jobs"]:
+            # print(job["location"]["name"])
             if location in job["location"]["name"]:
                 print("ye")
             else:
                 print(job["location"])
-            is_senior = job["title"].split(" ")[0] in unwanted_title
-            if is_senior:
-                break
             reduce_date = [ int(x) for x in job["updated_at"].split("T")[0].split("-") ]
             company_listing_date = date(*reduce_date)
             today = date.today()

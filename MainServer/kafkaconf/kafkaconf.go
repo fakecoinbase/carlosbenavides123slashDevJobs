@@ -1,11 +1,13 @@
 package kafkaconf
 
 import (
+	"os"
+
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 func NewProducer() (p *kafka.Producer) {
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "64.255.121.38:19092"})
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": os.Getenv("KAFKA_SERVER_IP")})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -14,8 +16,9 @@ func NewProducer() (p *kafka.Producer) {
 
 func NewConsumer() (c *kafka.Consumer) {
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": "64.255.121.38:19092",
+		"bootstrap.servers": os.Getenv("KAFKA_SERVER_IP"),
 		"group.id":          "CMS",
+		"auto.offset.reset": "earliest",
 	})
 	if err != nil {
 		panic(err)

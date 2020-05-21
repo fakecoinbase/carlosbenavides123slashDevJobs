@@ -52,6 +52,11 @@ class Query(object):
         location_sql = "INSERT INTO locations (location, company_name) VALUES (%s, %s)"
         self.cursor.execute(location_sql, (location, company_name))
 
+    def get_company_scrape_details(self, company_uuid):
+        company_scrape_details_sql = "SElECT c.wanted_departments, c.wanted_locations FROM company_scrape_details c WHERE c.company_uuid=%s"
+        self.cursor.execute(company_scrape_details_sql, (company_uuid,))
+        return self.cursor.fetchall()
+
 
     # for main server/devjobs
     def add_new_company(self, company, gh, lvr, oth):
@@ -72,3 +77,12 @@ class Query(object):
         company_detail_sql = "SELECT * from companies c INNER JOIN company_scrape_details csd ON c.company_name = csd.company_name WHERE c.company_name = (%s)"
         self.cursor.execute(company_detail_sql, (company_uuid,))
         return self.cursor.fetchone()
+    
+    def update_company_details(self, update_company_pb):
+        update_companies_table_sql = "UPDATE companies SET company_name=%s, company_scrape_website=%s, greenhouse=%s, lever=%s, other=%s WHERE company_uuid=%s"
+        self.cursor.execute(update_companies_table_sql, (update_company_pb.CompanyName, update_company_pb.CompanyWebsite, update_company_pb.GreenHouse, update_company_pb.Lever, update_company_pb.Other, update_company_pb.CompanyUUID))
+        print("done...")
+        uodate_company_scrape_details_table = "UPDATE company_scrape_details SET company_name=%s, wanted_departments=%s, wanted_locations=%s WHERE company_uuid=%s"
+        self.cursor.execute(uodate_company_scrape_details_table, (update_company_pb.CompanyName, update_company_pb.WantedDepartments, update_company_pb.WantedLocations, update_company_pb.CompanyUUID))
+        print("done...")
+

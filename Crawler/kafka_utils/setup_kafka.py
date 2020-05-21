@@ -6,13 +6,13 @@ import time
 class KafkaMsg():
 	def __init__(self):
 		self.producer = None
-		self.servers = ['192.168.1.66:19092',
-						'192.168.1.66:29092']
+		self.servers = ['192.168.0.120:19092',
+						'192.168.0.120:29092']
 
 	def setup_json_producer(self):
 		self.producer = KafkaProducer(
 						value_serializer=lambda m: json.dumps(m).encode('ascii'),
-						bootstrap_servers='192.168.1.66:19092'
+						bootstrap_servers='192.168.0.120:19092'
 						)
 	def setup_protobuf_producer(self):
 		self.producer = KafkaProducer(

@@ -58,7 +58,10 @@ hr.solid {
     display: block;
   }
 }
-
+.devjobslogo {
+  max-width: 10%;
+  max-height: 10%;
+}
 @media screen and (max-width: 600px) {
 
   .topnav.responsive {

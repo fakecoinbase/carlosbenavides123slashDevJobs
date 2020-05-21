@@ -1,28 +1,38 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 // import Modal from "react-modal";
-import { useParams } from 'react-router';
+import { useParams } from "react-router";
 
 import "./Navbar.scss";
 import Home from "../Home/Home";
 import JobForm from "../JobForm/JobForm";
 import NavDropdown from "../Dropdown/Dropdown";
 import CMS from "../CMS/CMS";
-import CMSInfo from "../CMSInfo/CMSInfo"
+import CMSInfo from "../CMSInfo/CMSInfo";
+import DevJobs from './DevJobs.svg' ;
 
 function Navbar({ joblist, sw }) {
   console.log(sw);
-  const [hamburgerClicked, setHamburgerClicked] = useState(false)
+  const [hamburgerClicked, setHamburgerClicked] = useState(false);
   function handleHamburger(e) {
-    setHamburgerClicked(!hamburgerClicked)
-    console.log(e, "hamburger event")
+    setHamburgerClicked(!hamburgerClicked);
+    console.log(e, "hamburger event");
   }
   return (
     <>
       <Router>
-        <div className={hamburgerClicked ? "topnav responsive" : "topnav"} id="topnav">
-          <span className="logo">Logo</span>
-          <span className="icon" onClick={handleHamburger}>&#9776;</span>
+        <div
+          className={hamburgerClicked ? "topnav responsive" : "topnav"}
+          id="topnav"
+        >
+          <Link to="/">
+          <span className="logo">DevJobs</span>
+
+            {/* <span className="logo"><img src={DevJobs} className="devjobslogo"/></span> */}
+          </Link>
+          <span className="icon" onClick={handleHamburger}>
+            &#9776;
+          </span>
 
           <div className="dropdown">
             <div className="dropdown-content">
@@ -30,10 +40,10 @@ function Navbar({ joblist, sw }) {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/about">About</Link>
+                <Link to="/about">Notifications</Link>
               </li>
               <li>
-                <Link to="/jobform">Add A Company</Link>
+                <Link to="/jobform">Suggest Companies</Link>
               </li>
             </div>
           </div>
@@ -53,13 +63,13 @@ function Navbar({ joblist, sw }) {
             <JobForm />
           </Route>
 
-          <Route path="/cms/:name" component={CMSInfo} />
+          <Route path="/cms/:name/:uuid" component={CMSInfo} />
 
           <Route path="/cms">
-                <CMS />
+            <CMS />
           </Route>
           <Route path="/">
-            <NavDropdown {...joblist}/>
+            <NavDropdown {...joblist} />
             <hr className="solid" />
             <Home {...joblist} />
           </Route>

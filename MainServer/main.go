@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -15,8 +16,10 @@ import (
 
 func main() {
 
+	os.Setenv("KAFKA_SERVER_IP", "192.168.0.120:19092")
+
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": "192.168.1.66:19092",
+		"bootstrap.servers": os.Getenv("KAFKA_SERVER_IP"),
 		"group.id":          "myGroup",
 		"auto.offset.reset": "earliest",
 	})
@@ -34,6 +37,9 @@ func main() {
 	// websocket for future
 
 	// rest apis
+
+	// update scrappy microservice
+	r.Handle("/rest/api/v1/cms/companydetails/update", controllers.ReverseRequestWithKafka(p, cmsconsumer, controllers.UpdateCompanyCMSData)).Methods("POST")
 
 	r.HandleFunc("/rest/api/v1/cms/home", controllers.GetCmsHomeData).Methods("GET")
 	// r.HandleFunc("/rest/api/v1/cms/companydetails", controllers.GetCmsCompanyData).Queries("company", "{company:[A-Za-z0-9 ]*$}").Methods("GET")

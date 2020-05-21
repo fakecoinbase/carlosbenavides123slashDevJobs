@@ -15,11 +15,24 @@ def greenhouse(company_uuid, company_name, company_website_scrape, query, utils,
     active_jobs = query.get_active_remembered_jobs(company_uuid)
     check_job_list = utils.convert_active_jobs_to_dict(active_jobs)
 
+    company_departments, company_locations = query.get_company_scrape_details(company_uuid)[0]
+    if company_departments == None:
+        company_departments = ""
+    if company_locations == None:
+        company_locations = ""
+    company_departments_set = set(company_departments.split(","))
+    company_locations_set = set(company_locations.split("/"))
+    print(company_departments_set, company_locations_set)
+
     for department in reduce_departments:
-        if department["name"] in wanted_departments:
+        if department["name"] in company_departments_set or department["name"] in wanted_departments:
             for job in department["jobs"]:
-                if job["location"]["name"] in wanted_locations:
+                if job["location"]["name"] in company_locations_set or job["location"]["name"] in wanted_departments:
                     extract_job_details(job, company_uuid, company_website_scrape, company_name, check_job_list, query, utils, kafka)
+
+    # for department in reduce_departments:
+    #     if 
+
     if check_job_list:
         for key, value in check_job_list.items():
             query.deactivate_job(value[0], value[2])

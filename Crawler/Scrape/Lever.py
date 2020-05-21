@@ -11,8 +11,9 @@ from protos.create_job import create_job
 from Utils.LocationUtils import location_builder
 
 def lever(company_uuid, company_name, company_website_scrape, query, utils, kafka):
+    print(company_website_scrape)
     page = requests.get(company_website_scrape)
-    soup = BeautifulSoup(page.text, 'html')
+    soup = BeautifulSoup(page.text, 'html.parser')
     res = soup.find_all("div", class_="posting")
 
     active_jobs = query.get_active_remembered_jobs(company_uuid)

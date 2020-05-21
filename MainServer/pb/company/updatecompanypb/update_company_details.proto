@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "updatecompanypb";
+
+message UpdateCompanyDetails {
+    string CompanyUUID = 1;
+    string CompanyName = 2;
+    string CompanyWebsite = 3;
+    bool GreenHouse = 4;
+    bool Lever = 5;
+    bool Other = 6;
+    string WantedDepartments = 7;
+    string WantedLocations = 8;
+}

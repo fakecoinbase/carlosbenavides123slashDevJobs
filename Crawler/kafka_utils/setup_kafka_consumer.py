@@ -5,13 +5,14 @@ from kafka import KafkaConsumer
 
 import protos.company.companypb.company_pb2 as company_pb2
 import protos.company.companyrequestpb.companyrequestpb_pb2 as companyrequest_pb2
+import protos.company.update_company_pb.update_company_details_pb2 as update_company_details_pb2
 from protos.company.companypb.create_company import create_company_pb
 from protos.company.company_cms_pb.create_company_cms_pb import create_company_cms_pb
 
 class KafkaConsumerScheduler:
 	def __init__(self, producer, query):
-		self.consumer = KafkaConsumer(bootstrap_servers='192.168.1.66:19092')
-		self.consumer.subscribe(['RequestCmsHome', 'AddNewCompany', "RequestCMSCompany"])
+		self.consumer = KafkaConsumer(bootstrap_servers='192.168.0.120:19092')
+		self.consumer.subscribe(['RequestCmsHome', 'AddNewCompany', "RequestCMSCompany", "RequestUpdateCms"])
 		self.t = threading.Thread(target=self.read_consumer_messages)
 		self.producer = producer
 		self.query = query
@@ -38,6 +39,8 @@ class KafkaConsumerScheduler:
 				self.add_new_company(msg)
 			elif msg.topic == "RequestCMSCompany":
 				self.response_cms_company(msg)
+			elif msg.topic == "RequestUpdateCms":
+				self.update_cms(msg)
 
 	def add_new_company(self, msg):
 		new_company = company_pb2.Company()
@@ -74,6 +77,15 @@ class KafkaConsumerScheduler:
 				data[3] = ""
 			company_cms = create_company_cms_pb(data)
 			self.producer.send_protobuf_message("ResponseCompanyCMS", company_cms)
+
+	def update_cms(self, msg):
+		update_company_pb = update_company_details_pb2.UpdateCompanyDetails()
+		update_company_pb.ParseFromString(msg.value)
+		print(update_company_pb)
+		self.query.update_company_details(update_company_pb)
+		
+
+
 
 	def determine_company_website(self, company_website):
 		gh = 0
