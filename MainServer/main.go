@@ -38,6 +38,14 @@ func main() {
 
 	// rest apis
 
+	// notifications
+	r.Handle("/rest/api/v1/notifications/preferences/create", controllers.ReverseRequestWithKafka(p, cmsconsumer, controllers.CreateNotificationPreference)).Methods("POST")
+	r.Handle("/rest/api/v1/notifications/preferences/update", controllers.ReverseRequestWithKafka(p, cmsconsumer, controllers.UpdateNotificationPreference)).Methods("POST")
+
+	// r.Handle("/rest/api/v1/notifications/preferences/create", controllers.CreateNotificationPreference).Methods("POST")
+	// r.Handle("/rest/api/v1/notifications/preferences/update", controllers.UpdateNotificationPreference).Methods("POST")
+	r.HandleFunc("/rest/api/v1/notifications/preferences", controllers.GetNotificationPreference).Queries("deviceUUID", "{deviceUUID:[A-Za-z0-9:_ ]*$}").Methods("GET")
+
 	// update scrappy microservice
 	r.Handle("/rest/api/v1/cms/companydetails/update", controllers.ReverseRequestWithKafka(p, cmsconsumer, controllers.UpdateCompanyCMSData)).Methods("POST")
 
