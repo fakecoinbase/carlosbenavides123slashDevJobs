@@ -32,7 +32,7 @@ def main():
 
         query = Query(cursor)
         utils = Utils()
-        kafka = KafkaMsg()
+        kafka = KafkaMsg(query)
         kafka.setup_protobuf_producer()
         kafka_consumer = KafkaConsumerScheduler(kafka, query)
         kafka_consumer.start()

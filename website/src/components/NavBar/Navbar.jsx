@@ -9,6 +9,7 @@ import JobForm from "../JobForm/JobForm";
 import NavDropdown from "../Dropdown/Dropdown";
 import CMS from "../CMS/CMS";
 import CMSInfo from "../CMSInfo/CMSInfo";
+import Notifications from "../Notifications/Notifications"
 import DevJobs from './DevJobs.svg' ;
 
 function Navbar({ joblist, sw }) {
@@ -38,7 +39,7 @@ function Navbar({ joblist, sw }) {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/about">Notifications</Link>
+                <Link to="/notifications">Notifications</Link>
               </li>
               <li>
                 <Link to="/jobform">Suggest Companies</Link>
@@ -51,8 +52,8 @@ function Navbar({ joblist, sw }) {
         {/* A <Switch> looks through its children <Route>s and
                 renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/about">
-            <About sw={sw} />
+          <Route path="/notifications">
+            <Notifications sw={sw} />
           </Route>
           <Route path="/users">
             <Users />
@@ -132,19 +133,6 @@ function Navbar({ joblist, sw }) {
 //     </div>
 //   );
 // }
-
-function About({ sw }) {
-  return (
-    <>
-      <h2>About</h2>
-      <button onClick={sw.onClickAskUserPermission}>yeet</button>
-      <button onClick={sw.onClickSubscribeToPushNotification}>uhh</button>
-      lol
-      {sw.isPushNotificationSupported}
-      {/* <button onClick={sw.onClickSubscribeToPushNotification}>yeah</button> */}
-    </>
-  );
-}
 
 function Users() {
   return <h2>Users</h2>;

@@ -39,6 +39,15 @@ def run_migrations(cursor):
                     ( location VARCHAR(255) NOT NULL, \
                     company_name VARCHAR(255) NOT NULL \
                     )")
+    cursor.execute("CREATE TABLE IF NOT EXISTS notifications_by_company \
+                    ( company_uuid VARCHAR(255), \
+                    device_uuid VARCHAR(255), \
+                    intern TINYINT(1), \
+                    entry TINYINT(1), \
+                    mid TINYINT(1), \
+                    senior TINYINT(1), \
+                    manager TINYINT(1) \
+                    )")
 
     # TODO
     # cursor.execute("CREATE TABLE IF NOT EXISTS company_scrape_details \

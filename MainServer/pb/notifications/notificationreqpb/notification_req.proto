@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "notificationreqpb";
+
+message NotifReq {
+    string CompanyUUID = 1;
+    string DeviceUUID = 2;
+    string Action = 3;
+    bool Intern = 4;
+    bool Entry = 5;
+    bool Mid = 6;
+    bool Senior = 7;
+    bool Manager = 8;
+}

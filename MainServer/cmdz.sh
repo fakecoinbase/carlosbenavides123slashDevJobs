@@ -6,7 +6,7 @@ sudo docker run --net=host --rm confluentinc/cp-kafka:5.0.0 kafka-topics --creat
 CREATE DATABASE devjobs;
 
 
-drop tables companies, jobs, jobs_pivot, levels, locations, entry_jobs, intern_jobs, mid_jobs, senior_jobs;
+drop tables companies, jobs, jobs_pivot, levels, locations, entry_jobs, intern_jobs, mid_jobs, senior_jobs, notifications_by_company;
 
 CREATE TABLE jobs_pivot(
     job_uuid varchar(255),
@@ -113,6 +113,16 @@ INSERT INTO levels(job_level) VALUES ("Entry");
 INSERT INTO levels(job_level) VALUES ("Mid");
 INSERT INTO levels(job_level) VALUES ("Senior");
 INSERT INTO levels(job_level) VALUES ("Manager");
+
+CREATE TABLE notifications_by_company (
+    company_uuid VARCHAR(255),
+    device_uuid VARCHAR(255),
+    intern TINYINT(1),
+    entry TINYINT(1),
+    mid TINYINT(1),
+    senior TINYINT(1),
+    manager TINYINT(1)
+);
 
 # INSERT INTO companies(company_uuid, name, cloudinary) 
 # VALUES ("50b3dae9-0bec-456f-af6d-61a8fabe0935", "Honey", "https://res.cloudinary.com/dhxwdb3jl/image/upload/v1586121171/unnamed_wqeqel.png");

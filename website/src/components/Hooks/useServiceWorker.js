@@ -19,7 +19,7 @@ export function useServiceWorker() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  function checkPermissionAndGetToken() {
     if (pushNotificationSupported && userConsent === "granted") {
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker
@@ -40,7 +40,13 @@ export function useServiceWorker() {
           });
       }
     }
-  }, []);
+  }
+
+  useEffect(() => {
+    if (userConsent === "granted") {
+      checkPermissionAndGetToken()
+    }
+  }, [userConsent]);
 
   // useEffect(() => {
   //     setLoading(true);
@@ -58,6 +64,7 @@ export function useServiceWorker() {
     setError(false);
     askUserPermission().then(consent => {
       setUserConsent(consent);
+      console.log(consent)
       if (consent !== "granted") {
         console.log("consent denied");
       }
@@ -80,6 +87,7 @@ export function useServiceWorker() {
 
   return {
     onClickAskUserPermission,
+    fcmID,
     // onClickSubscribeToPushNotification,
     loading,
     error,

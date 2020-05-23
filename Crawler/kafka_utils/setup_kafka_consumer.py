@@ -5,6 +5,8 @@ from kafka import KafkaConsumer
 
 import protos.company.companypb.company_pb2 as company_pb2
 import protos.company.companyrequestpb.companyrequestpb_pb2 as companyrequest_pb2
+import protos.notifications.notificationreqpb.notification_req_pb2 as notification_req_pb2
+
 import protos.company.update_company_pb.update_company_details_pb2 as update_company_details_pb2
 from protos.company.companypb.create_company import create_company_pb
 from protos.company.company_cms_pb.create_company_cms_pb import create_company_cms_pb
@@ -12,7 +14,7 @@ from protos.company.company_cms_pb.create_company_cms_pb import create_company_c
 class KafkaConsumerScheduler:
 	def __init__(self, producer, query):
 		self.consumer = KafkaConsumer(bootstrap_servers='192.168.0.120:19092')
-		self.consumer.subscribe(['RequestCmsHome', 'AddNewCompany', "RequestCMSCompany", "RequestUpdateCms"])
+		self.consumer.subscribe(['RequestCmsHome', 'AddNewCompany', "RequestCMSCompany", "RequestUpdateCms", "NotificationReq"])
 		self.t = threading.Thread(target=self.read_consumer_messages)
 		self.producer = producer
 		self.query = query
@@ -41,6 +43,8 @@ class KafkaConsumerScheduler:
 				self.response_cms_company(msg)
 			elif msg.topic == "RequestUpdateCms":
 				self.update_cms(msg)
+			elif msg.topic == "NotificationReq":
+				self.notification_req(msg)
 
 	def add_new_company(self, msg):
 		new_company = company_pb2.Company()
@@ -83,9 +87,6 @@ class KafkaConsumerScheduler:
 		update_company_pb.ParseFromString(msg.value)
 		print(update_company_pb)
 		self.query.update_company_details(update_company_pb)
-		
-
-
 
 	def determine_company_website(self, company_website):
 		gh = 0
@@ -99,3 +100,14 @@ class KafkaConsumerScheduler:
 			oth = 1
 		return gh, lvr, oth
 
+	# notifs
+	def notification_req(self, msg):
+		notif_req = notification_req_pb2.NotifReq()
+		notif_req.ParseFromString(msg.value)
+		print(notif_req)
+		if notif_req.Action == "CREATE":
+			self.query.create_notif(notif_req)
+		elif notif_req.Action == "UPDATE":
+			self.query.update_notif(notif_req)
+		elif notif_req.Action == "DELETE":
+			self.query.create_notif(notif_req)

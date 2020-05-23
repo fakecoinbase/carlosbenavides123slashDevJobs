@@ -117,7 +117,9 @@ export function useJobs() {
   // }, [experience])
 
   useEffect(() => {
-    homepageCall()
+    if(jobs === [] && apiCalled === false){
+      homepageCall()
+    }
   }, []);
 
   function homepageCall() {

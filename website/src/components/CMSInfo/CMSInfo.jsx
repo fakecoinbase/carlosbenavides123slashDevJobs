@@ -139,7 +139,7 @@ function CMS() {
             />
             <input
               className="JobFormInput"
-              placeholder={`Add locations (comma seperated) for ${params.name}`}
+              placeholder={`Add locations (forward slash seperated) for ${params.name}`}
               onChange={e => setWantedLocations(e.target.value)}
               value={wantedLocations}
             />
